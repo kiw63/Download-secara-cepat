@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Terabox Turbo Downloader</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    margin: 0; padding: 20px 16px 80px;
+    background: radial-gradient(circle at top left, #1e3a8a 0%, #0f172a 45%, #020617 100%);
+    color: #e2e8f0; min-height: 100vh;
+  }
+  .wrap { max-width: 680px; margin: 0 auto; }
+  header { text-align: center; margin-bottom: 24px; }
+  header h1 {
+    font-size: 26px; margin: 0 0 6px;
+    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-weight: 800; letter-spacing: -.5px;
+  }
+  header p { font-size: 13px; color: #94a3b8; margin: 0; }
+
+  .input-box { display: flex; gap: 8px; margin-bottom: 14px; }
+  input[type=text] {
+    flex: 1; padding: 14px 16px; border-radius: 12px;
+    border: 1px solid #334155; background: rgba(30,41,59,.6);
+    color: #e2e8f0; font-size: 15px; backdrop-filter: blur(8px);
+    transition: .2s;
+  }
+  input[type=text]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.2); }
+
+  button.primary {
+    padding: 14px 22px; border: none; border-radius: 12px;
+    background: linear-gradient(135deg, #2563eb, #7c3aed);
+    color: #fff; font-size: 15px; font-weight: 700; cursor: pointer;
+    transition: .2s; white-space: nowrap;
+  }
+  button.primary:active { transform: scale(.97); }
+  button.primary:disabled { opacity: .5; cursor: not-allowed; }
+
+  #status { font-size: 13px; color: #94a3b8; margin-bottom: 14px; min-height: 18px; }
+  .error { color: #f87171; }
+  .success { color: #4ade80; }
+
+  .toolbar {
+    display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+    align-items: center; font-size: 13px;
+  }
+  .toolbar button {
+    background: rgba(51,65,85,.5); color: #cbd5e1;
+    border: 1px solid #334155; padding: 8px 12px; border-radius: 8px;
+    cursor: pointer; font-size: 12px; font-weight: 600;
+  }
+  .toolbar button:active { background: #334155; }
+
+  .engine-badge {
+    font-size: 10px; padding: 3px 8px; border-radius: 6px;
+    background: rgba(34,197,94,.15); color: #4ade80;
+    border: 1px solid rgba(34,197,94,.3); font-weight: 700;
+    margin-left: auto;
+  }
+  .engine-badge.warn { background: rgba(245,158,11,.15); color: #fbbf24; border-color: rgba(245,158,11,.3); }
+
+  .file-card {
+    border: 1px solid #334155; border-radius: 14px; padding: 14px;
+    margin-bottom: 10px; background: rgba(30,41,59,.5);
+    backdrop-filter: blur(8px); transition: .2s;
+  }
+  .file-card.selected { border-color: #3b82f6; background: rgba(37,99,235,.12); }
+  .file-head { display: flex; align-items: flex-start; gap: 10px; }
+  .checkbox {
+    width: 22px; height: 22px; border-radius: 6px; border: 2px solid #475569;
+    flex-shrink: 0; margin-top: 2px; cursor: pointer; display: flex;
+    align-items: center; justify-content: center; transition: .15s;
+  }
+  .checkbox.checked { background: #2563eb; border-color: #2563eb; }
+  .checkbox.checked::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 700; }
+  .file-info { flex: 1; min-width: 0; }
+  .file-name {
+    font-weight: 600; font-size: 14px; word-break: break-all;
+    line-height: 1.4; margin-bottom: 4px;
+  }
+  .file-size { font-size: 12px; color: #94a3b8; }
+
+  .actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
+  .actions button, .actions a {
+    flex: 1; min-width: 90px; text-align: center; padding: 10px 12px;
+    border-radius: 8px; font-size: 13px; font-weight: 600;
+    text-decoration: none; border: none; cursor: pointer;
+    transition: .15s; display: inline-flex; align-items: center;
+    justify-content: center; gap: 4px;
+  }
+  .actions button:active, .actions a:active { transform: scale(.96); }
+  .btn-dl { background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; }
+  .btn-dl:disabled { background: #475569; cursor: not-allowed; background-image: none; }
+  .btn-share { background: linear-gradient(135deg, #7c3aed, #a855f7); color: #fff; }
+  .btn-share:disabled { background: #475569; cursor: not-allowed; background-image: none; }
+  .btn-stream { background: #f59e0b; color: #fff; }
+
+  .progress {
+    margin-top: 10px; height: 8px; background: #1e293b;
+    border-radius: 4px; overflow: hidden; display: none;
+  }
+  .progress.active { display: block; }
+  .progress-bar {
+    height: 100%; width: 0%; transition: width .15s linear;
+    background: linear-gradient(90deg, #3b82f6, #a78bfa, #ec4899);
+    background-size: 200% 100%; animation: shimmer 2s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .progress-text {
+    font-size: 11px; color: #94a3b8; margin-top: 6px;
+    display: none; justify-content: space-between;
+  }
+  .progress-text.active { display: flex; }
+  .progress-text .spd { color: #4ade80; font-weight: 600; }
+
+  .batch-bar {
+    position: fixed; bottom: 16px; left: 16px; right: 16px;
+    max-width: 648px; margin: 0 auto;
+    background: rgba(15,23,42,.95); backdrop-filter: blur(12px);
+    border: 1px solid #334155; border-radius: 14px;
+    padding: 12px 16px; display: none; gap: 12px; align-items: center;
+    box-shadow: 0 10px 40px rgba(0,0,0,.5); z-index: 100;
+  }
+  .batch-bar.active { display: flex; }
+  .batch-bar .count { font-size: 13px; color: #cbd5e1; flex: 1; font-weight: 600; }
+  .batch-bar button {
+    padding: 10px 18px; border: none; border-radius: 10px;
+    font-weight: 700; cursor: pointer; font-size: 13px;
+  }
+  .batch-dl { background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; }
+  .batch-dl:disabled { background: #475569; background-image: none; }
+
+  .modal {
+    position: fixed; inset: 0; background: rgba(0,0,0,.9);
+    display: none; align-items: center; justify-content: center;
+    z-index: 200; padding: 20px;
+  }
+  .modal.active { display: flex; }
+  .modal video { max-width: 100%; max-height: 80vh; border-radius: 12px; background: #000; }
+  .modal-close {
+    position: absolute; top: 20px; right: 20px;
+    background: #dc2626; color: #fff; border: none;
+    width: 40px; height: 40px; border-radius: 50%;
+    font-size: 20px; cursor: pointer; font-weight: 700;
+  }
+
+  .note {
+    font-size: 11px; color: #64748b; margin-top: 30px;
+    line-height: 1.7; padding: 14px; border-radius: 12px;
+    background: rgba(30,41,59,.3); border: 1px solid #1e293b;
+  }
+  .note strong { color: #94a3b8; }
+
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin .7s linear infinite; margin-right: 6px;
+    vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>⚡ Terabox Turbo</h1>
+    <p>16 Threads · Direct-to-Disk · Support 3GB+</p>
+  </header>
+
+  <div class="input-box">
+    <input id="linkInput" type="text" placeholder="https://terabox.com/s/xxxx" autocomplete="off" />
+    <button class="primary" id="parseBtn">Ambil</button>
+  </div>
+
+  <div id="status"></div>
+  <div class="toolbar" id="toolbar" style="display:none">
+    <button id="selectAll">Pilih Semua</button>
+    <button id="deselectAll">Hapus Pilihan</button>
+    <span class="engine-badge" id="engineBadge">—</span>
+  </div>
+  <div id="result"></div>
+</div>
+
+<div class="batch-bar" id="batchBar">
+  <span class="count" id="batchCount">0 file dipilih</span>
+  <button class="batch-dl" id="batchDownload">⬇ Unduh Semua</button>
+</div>
+
+<div class="modal" id="videoModal">
+  <button class="modal-close" id="modalClose">✕</button>
+  <video id="videoPlayer" controls playsinline></video>
+</div>
+
+<div class="note">
+  <strong>Mode Turbo:</strong> File ditulis langsung ke disk dengan <strong>16 koneksi paralel</strong> — RAM tidak terpakai meski file 3GB.<br>
+  <strong>Browser didukung:</strong> Chrome / Edge / Opera desktop → mode Turbo penuh. Firefox & browser mobile → otomatis pakai unduhan native browser (juga support 3GB, tapi 1 koneksi).<br>
+  <strong>Simpan ke Galeri:</strong> Hanya untuk file &lt; 500MB. File besar akan otomatis ke folder Downloads.
+</div>
+
+<script>
+/* ============================================================
+   KONFIGURASI
+   ============================================================ */
+const API_ENDPOINTS = [
+  'https://terabox-worker.robinkumarshakya103.workers.dev',
+];
+const THREADS = 16;                     // jumlah koneksi paralel
+const SHARE_MAX_SIZE = 500 * 1024 * 1024; // 500MB batas share ke galeri
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let currentFiles = [];
+let selected = new Set();
+
+/* ============================================================
+   ELEMEN
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const linkInput = $('linkInput');
+const parseBtn = $('parseBtn');
+const statusEl = $('status');
+const resultEl = $('result');
+const toolbar = $('toolbar');
+const engineBadge = $('engineBadge');
+const batchBar = $('batchBar');
+const batchCount = $('batchCount');
+const batchDownload = $('batchDownload');
+const videoModal = $('videoModal');
+const videoPlayer = $('videoPlayer');
+
+/* Deteksi kemampuan browser */
+const HAS_FSA = typeof window.showSaveFilePicker === 'function';
+const HAS_SHARE = !!(navigator.canShare && navigator.share);
+
+/* Update badge engine */
+if (HAS_FSA) {
+  engineBadge.textContent = `⚡ Turbo · ${THREADS} threads`;
+  engineBadge.classList.remove('warn');
+} else {
+  engineBadge.textContent = '🔄 Mode Native';
+  engineBadge.classList.add('warn');
+}
+
+/* ============================================================
+   PARSE LINK
+   ============================================================ */
+async function parseLink() {
+  const url = linkInput.value.trim();
+  if (!url) return setStatus('Masukkan link Terabox dulu.', 'error');
+
+  parseBtn.disabled = true;
+  parseBtn.innerHTML = '<span class="spinner"></span>Loading';
+  setStatus('Memproses link...');
+  resultEl.innerHTML = '';
+  currentFiles = [];
+  selected.clear();
+  updateBatchBar();
+  toolbar.style.display = 'none';
+
+  let lastError = 'Gagal mengambil data.';
+
+  for (const base of API_ENDPOINTS) {
+    try {
+      const res = await fetch(`${base}/api?url=${encodeURIComponent(url)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+
+      if (!data.success || !data.files || data.files.length === 0) {
+        throw new Error(data.error || 'Tidak ada file ditemukan.');
+      }
+
+      currentFiles = data.files;
+      renderFiles(data.files);
+      setStatus(`✅ Ditemukan ${data.files.length} file.`, 'success');
+      toolbar.style.display = 'flex';
+      parseBtn.disabled = false;
+      parseBtn.textContent = 'Ambil';
+      return;
+    } catch (err) {
+      lastError = err.message;
+      continue;
+    }
+  }
+
+  setStatus(`❌ ${lastError}`, 'error');
+  parseBtn.disabled = false;
+  parseBtn.textContent = 'Ambil';
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function renderFiles(files) {
+  resultEl.innerHTML = files.map((f, i) => `
+    <div class="file-card" data-idx="${i}">
+      <div class="file-head">
+        <div class="checkbox" data-idx="${i}"></div>
+        <div class="file-info">
+          <div class="file-name">${esc(f.file_name || f.name || 'Tanpa nama')}</div>
+          <div class="file-size">${f.size || f.file_size || 'Ukuran tidak diketahui'}</div>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-dl" data-action="dl" data-idx="${i}">⚡ Unduh Turbo</button>
+        ${HAS_SHARE ? `<button class="btn-share" data-action="share" data-idx="${i}">📥 Simpan ke Galeri</button>` : ''}
+        <button class="btn-stream" data-action="stream" data-idx="${i}">▶ Putar</button>
+      </div>
+      <div class="progress" data-progress="${i}"><div class="progress-bar"></div></div>
+      <div class="progress-text" data-progress-text="${i}">
+        <span class="pct">0%</span>
+        <span class="spd">—</span>
+      </div>
+    </div>
+  `).join('');
+
+  resultEl.querySelectorAll('.checkbox').forEach(cb => {
+    cb.addEventListener('click', () => toggleSelect(parseInt(cb.dataset.idx), cb));
+  });
+
+  resultEl.querySelectorAll('[data-action]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = parseInt(btn.dataset.idx);
+      const file = currentFiles[idx];
+      if (btn.dataset.action === 'dl') handleDownload(file, idx, btn);
+      if (btn.dataset.action === 'share') handleShare(file, idx, btn);
+      if (btn.dataset.action === 'stream') handleStream(file);
+    });
+  });
+}
+
+/* ============================================================
+   SELEKSI
+   ============================================================ */
+function toggleSelect(idx, cbEl) {
+  if (selected.has(idx)) {
+    selected.delete(idx);
+    cbEl.classList.remove('checked');
+    cbEl.closest('.file-card').classList.remove('selected');
+  } else {
+    selected.add(idx);
+    cbEl.classList.add('checked');
+    cbEl.closest('.file-card').classList.add('selected');
+  }
+  updateBatchBar();
+}
+
+function updateBatchBar() {
+  const n = selected.size;
+  if (n > 0) {
+    batchBar.classList.add('active');
+    batchCount.textContent = `${n} file dipilih`;
+  } else {
+    batchBar.classList.remove('active');
+  }
+}
+
+/* ============================================================
+   ⚡ MESIN TURBO — TULIS LANGSUNG KE DISK
+   ============================================================ */
+async function turboDownloadToHandle(url, totalSize, writable, onProgress) {
+  // Cek dukungan Range request
+  let supportsRange = false;
+  try {
+    const test = await fetch(url, { headers: { 'Range': 'bytes=0-0' } });
+    supportsRange = test.status === 206;
+    const cr = test.headers.get('content-range');
+    if (cr) {
+      const m = cr.match(/\/(\d+)/);
+      if (m) totalSize = parseInt(m[1], 10);
+    }
+    try { test.body && test.body.cancel(); } catch (e) {}
+  } catch (e) {
+    supportsRange = false;
+  }
+
+  // Fallback kalau server tidak support Range
+  if (!supportsRange || !totalSize || totalSize < 2 * 1024 * 1024) {
+    return streamSingleToWritable(url, writable, onProgress);
+  }
+
+  // === MULTI-THREAD ===
+  const numThreads = Math.min(THREADS, Math.ceil(totalSize / (1 * 1024 * 1024)));
+  const chunkSize = Math.ceil(totalSize / numThreads);
+  let downloaded = 0;
+  const startTime = Date.now();
+
+  const progressTick = () => {
+    const elapsed = (Date.now() - startTime) / 1000;
+    const speed = elapsed > 0 ? downloaded / elapsed : 0;
+    onProgress(Math.min(downloaded / totalSize, 1), speed);
+  };
+
+  const tasks = [];
+  for (let i = 0; i < numThreads; i++) {
+    const start = i * chunkSize;
+    const end = Math.min(start + chunkSize - 1, totalSize - 1);
+    if (start > end) continue;
+
+    tasks.push((async () => {
+      const res = await fetch(url, {
+        headers: { 'Range': `bytes=${start}-${end}` }
+      });
+      if (!res.ok && res.status !== 206) {
+        throw new Error(`HTTP ${res.status} on chunk ${i}`);
+      }
+
+      const reader = res.body.getReader();
+      let position = start;
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        await writable.write({ type: 'write', position, data: value });
+        position += value.length;
+        downloaded += value.length;
+        progressTick();
+      }
+    })());
+  }
+
+  await Promise.all(tasks);
+}
+
+async function streamSingleToWritable(url, writable, onProgress) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+  const total = parseInt(res.headers.get('content-length') || '0', 10);
+  const reader = res.body.getReader();
+  let position = 0;
+  let downloaded = 0;
+  const startTime = Date.now();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    await writable.write({ type: 'write', position, data: value });
+    position += value.length;
+    downloaded += value.length;
+
+    const elapsed = (Date.now() - startTime) / 1000;
+    const speed = elapsed > 0 ? downloaded / elapsed : 0;
+    if (total) onProgress(downloaded / total, speed);
+  }
+}
+
+/* ============================================================
+   HANDLE DOWNLOAD — pintar pilih metode
+   ============================================================ */
+async function handleDownload(file, idx, btn) {
+  const url = file.download_url || file.downloadUrl;
+  if (!url) return setStatus('❌ Link unduhan tidak tersedia.', 'error');
+
+  const fileName = file.file_name || 'terabox_file';
+  const fileSize = parseSize(file.size || file.file_size || '0');
+
+  const card = btn.closest('.file-card');
+  const progEl = card.querySelector(`[data-progress="${idx}"]`);
+  const progBar = progEl.querySelector('.progress-bar');
+  const progText = card.querySelector(`[data-progress-text="${idx}"]`);
+  const pctEl = progText.querySelector('.pct');
+  const spdEl = progText.querySelector('.spd');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Memulai';
+
+  /* === JALUR 1: Mode Turbo (FSA API) === */
+  if (HAS_FSA) {
+    try {
+      // Panggil picker DULU sebelum await apapun (user gesture requirement)
+      const handle = await window.showSaveFilePicker({ suggestedName: fileName });
+
+      progEl.classList.add('active');
+      progText.classList.add('active');
+      btn.innerHTML = '<span class="spinner"></span>Turbo';
+
+      const writable = await handle.createWritable({ keepExistingData: false });
+
+      await turboDownloadToHandle(url, fileSize, writable, (p, speed) => {
+        progBar.style.width = (p * 100).toFixed(1) + '%';
+        pctEl.textContent = (p * 100).toFixed(0) + '%';
+        spdEl.textContent = formatSpeed(speed);
+      });
+
+      await writable.close();
+
+      progBar.style.width = '100%';
+      pctEl.textContent = '100%';
+      spdEl.textContent = '✓ Selesai';
+      setStatus('✅ File selesai disimpan.', 'success');
+
+      btn.disabled = false;
+      btn.innerHTML = '⚡ Unduh Turbo';
+
+      setTimeout(() => {
+        progEl.classList.remove('active');
+        progText.classList.remove('active');
+        progBar.style.width = '0%';
+      }, 4000);
+      return;
+
+    } catch (err) {
+      // User batalkan save dialog → jangan fallback
+      if (err.name === 'AbortError') {
+        btn.disabled = false;
+        btn.innerHTML = '⚡ Unduh Turbo';
+        progEl.classList.remove('active');
+        progText.classList.remove('active');
+        return;
+      }
+      console.warn('Turbo gagal, fallback ke native:', err);
+      setStatus(`⚠️ Turbo gagal (${err.message}), pakai native...`, 'error');
+    }
+  }
+
+  /* === JALUR 2: Native download === */
+  triggerNative(url, fileName);
+  setStatus('📂 File dikirim ke browser. Cek folder Downloads.', 'success');
+
+  btn.disabled = false;
+  btn.innerHTML = '⚡ Unduh Turbo';
+}
+
+function triggerNative(url, fileName) {
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+/* ============================================================
+   SIMPAN KE GALERI (Web Share API)
+   ============================================================ */
+async function handleShare(file, idx, btn) {
+  const url = file.download_url || file.downloadUrl;
+  if (!url) return setStatus('❌ Link tidak tersedia.', 'error');
+
+  const fileName = file.file_name || 'terabox_file.mp4';
+  const fileSize = parseSize(file.size || file.file_size || '0');
+
+  // File besar tidak bisa via share
+  if (fileSize > SHARE_MAX_SIZE) {
+    triggerNative(url, fileName);
+    setStatus(`⚠️ File ${formatBytes(fileSize)} terlalu besar untuk share. Diunduh ke Downloads.`, 'error');
+    return;
+  }
+
+  const card = btn.closest('.file-card');
+  const progEl = card.querySelector(`[data-progress="${idx}"]`);
+  const progBar = progEl.querySelector('.progress-bar');
+  const progText = card.querySelector(`[data-progress-text="${idx}"]`);
+  const pctEl = progText.querySelector('.pct');
+  const spdEl = progText.querySelector('.spd');
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Siapkan';
+  progEl.classList.add('active');
+  progText.classList.add('active');
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+    const total = parseInt(res.headers.get('content-length') || '0', 10) || fileSize;
+    const reader = res.body.getReader();
+    const parts = [];
+    let received = 0;
+    const startTime = Date.now();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      parts.push(value);
+      received += value.length;
+      const elapsed = (Date.now() - startTime) / 1000;
+      const speed = elapsed > 0 ? received / elapsed : 0;
+      progBar.style.width = ((received / total) * 100).toFixed(1) + '%';
+      pctEl.textContent = ((received / total) * 100).toFixed(0) + '%';
+      spdEl.textContent = formatSpeed(speed);
+    }
+
+    const blob = new Blob(parts, { type: 'video/mp4' });
+    const fileObj = new File([blob], fileName, { type: blob.type });
+
+    if (!navigator.canShare({ files: [fileObj] })) {
+      triggerNative(url, fileName);
+      setStatus('⚠️ HP tidak support share file. Diunduh ke Downloads.', 'error');
+      return;
+    }
+
+    await navigator.share({ files: [fileObj], title: fileName });
+    setStatus('✅ Pilih "Simpan ke Photos" pada menu.', 'success');
+
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      setStatus('Dibatalkan.');
+    } else {
+      setStatus(`❌ ${err.message}`, 'error');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📥 Simpan ke Galeri';
+    setTimeout(() => {
+      progEl.classList.remove('active');
+      progText.classList.remove('active');
+    }, 2500);
+  }
+}
+
+/* ============================================================
+   STREAM
+   ============================================================ */
+function handleStream(file) {
+  const url = file.streaming_url || file.streamUrl || file.download_url;
+  if (!url) return setStatus('❌ Link stream tidak tersedia.', 'error');
+  videoPlayer.src = url;
+  videoModal.classList.add('active');
+  videoPlayer.play().catch(() => {});
+}
+
+$('modalClose').addEventListener('click', () => {
+  videoPlayer.pause();
+  videoPlayer.src = '';
+  videoModal.classList.remove('active');
+});
+
+/* ============================================================
+   BATCH DOWNLOAD
+   ============================================================ */
+batchDownload.addEventListener('click', async () => {
+  if (selected.size === 0) return;
+
+  // Batch hanya bisa via native (karena FSA butuh interaksi per file)
+  const indices = Array.from(selected).sort((a, b) => a - b);
+
+  if (HAS_FSA) {
+    setStatus('ℹ️ Mode Turbo hanya bisa 1 file per dialog. Mengunduh via native untuk batch...', 'error');
+  }
+
+  batchDownload.disabled = true;
+  batchDownload.innerHTML = '<span class="spinner"></span>Memproses';
+
+  let ok = 0;
+  for (const idx of indices) {
+    const file = currentFiles[idx];
+    const url = file.download_url || file.downloadUrl;
+    if (url) {
+      triggerNative(url, file.file_name || 'terabox_file');
+      ok++;
+      await new Promise(r => setTimeout(r, 800));
+    }
+  }
+
+  setStatus(`✅ ${ok} file dikirim ke browser.`, 'success');
+  batchDownload.disabled = false;
+  batchDownload.textContent = '⬇ Unduh Semua';
+});
+
+/* ============================================================
+   TOOLBAR
+   ============================================================ */
+$('selectAll').addEventListener('click', () => {
+  currentFiles.forEach((_, i) => {
+    selected.add(i);
+    const cb = resultEl.querySelector(`.checkbox[data-idx="${i}"]`);
+    if (cb) {
+      cb.classList.add('checked');
+      cb.closest('.file-card').classList.add('selected');
+    }
+  });
+  updateBatchBar();
+});
+
+$('deselectAll').addEventListener('click', () => {
+  selected.clear();
+  resultEl.querySelectorAll('.checkbox').forEach(cb => cb.classList.remove('checked'));
+  resultEl.querySelectorAll('.file-card').forEach(c => c.classList.remove('selected'));
+  updateBatchBar();
+});
+
+/* ============================================================
+   UTIL
+   ============================================================ */
+function esc(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function parseSize(str) {
+  if (typeof str === 'number') return str;
+  const m = String(str).match(/([\d.]+)\s*(B|KB|MB|GB|TB)?/i);
+  if (!m) return 0;
+  const num = parseFloat(m[1]);
+  const unit = (m[2] || 'B').toUpperCase();
+  const mult = { B: 1, KB: 1024, MB: 1024 ** 2, GB: 1024 ** 3, TB: 1024 ** 4 };
+  return Math.round(num * (mult[unit] || 1));
+}
+
+function formatBytes(b) {
+  if (b < 1024) return b + ' B';
+  if (b < 1024 ** 2) return (b / 1024).toFixed(1) + ' KB';
+  if (b < 1024 ** 3) return (b / 1024 ** 2).toFixed(1) + ' MB';
+  return (b / 1024 ** 3).toFixed(2) + ' GB';
+}
+
+function formatSpeed(bps) {
+  if (!bps || bps < 1) return '—';
+  if (bps < 1024) return bps.toFixed(0) + ' B/s';
+  if (bps < 1024 ** 2) return (bps / 1024).toFixed(1) + ' KB/s';
+  return (bps / 1024 ** 2).toFixed(2) + ' MB/s';
+}
+
+function setStatus(msg, cls = '') {
+  statusEl.innerHTML = msg;
+  statusEl.className = cls;
+}
+
+/* ============================================================
+   EVENT
+   ============================================================ */
+parseBtn.addEventListener('click', parseLink);
+linkInput.addEventListener('keydown', e => { if (e.key === 'Enter') parseLink(); });
+</script>
+</body>
+  </html>
