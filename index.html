@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Terabox Turbo Downloader</title>
+<title>⚡ Terabox Turbo Pro</title>
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    margin: 0; padding: 20px 16px 80px;
+    margin: 0; padding: 20px 16px 90px;
     background: radial-gradient(circle at top left, #1e3a8a 0%, #0f172a 45%, #020617 100%);
     color: #e2e8f0; min-height: 100vh;
   }
   .wrap { max-width: 680px; margin: 0 auto; }
-  header { text-align: center; margin-bottom: 24px; }
+  header { text-align: center; margin-bottom: 22px; }
   header h1 {
     font-size: 26px; margin: 0 0 6px;
     background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
@@ -22,12 +22,12 @@
   }
   header p { font-size: 13px; color: #94a3b8; margin: 0; }
 
-  .input-box { display: flex; gap: 8px; margin-bottom: 14px; }
+  .input-box { display: flex; gap: 8px; margin-bottom: 12px; }
   input[type=text] {
     flex: 1; padding: 14px 16px; border-radius: 12px;
     border: 1px solid #334155; background: rgba(30,41,59,.6);
     color: #e2e8f0; font-size: 15px; backdrop-filter: blur(8px);
-    transition: .2s;
+    transition: .2s; min-width: 0;
   }
   input[type=text]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.2); }
 
@@ -40,9 +40,10 @@
   button.primary:active { transform: scale(.97); }
   button.primary:disabled { opacity: .5; cursor: not-allowed; }
 
-  #status { font-size: 13px; color: #94a3b8; margin-bottom: 14px; min-height: 18px; }
+  #status { font-size: 13px; color: #94a3b8; margin-bottom: 14px; min-height: 18px; line-height: 1.5; }
   .error { color: #f87171; }
   .success { color: #4ade80; }
+  .warn { color: #fbbf24; }
 
   .toolbar {
     display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
@@ -56,7 +57,7 @@
   .toolbar button:active { background: #334155; }
 
   .engine-badge {
-    font-size: 10px; padding: 3px 8px; border-radius: 6px;
+    font-size: 10px; padding: 4px 9px; border-radius: 6px;
     background: rgba(34,197,94,.15); color: #4ade80;
     border: 1px solid rgba(34,197,94,.3); font-weight: 700;
     margin-left: auto;
@@ -78,10 +79,7 @@
   .checkbox.checked { background: #2563eb; border-color: #2563eb; }
   .checkbox.checked::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 700; }
   .file-info { flex: 1; min-width: 0; }
-  .file-name {
-    font-weight: 600; font-size: 14px; word-break: break-all;
-    line-height: 1.4; margin-bottom: 4px;
-  }
+  .file-name { font-weight: 600; font-size: 14px; word-break: break-all; line-height: 1.4; margin-bottom: 4px; }
   .file-size { font-size: 12px; color: #94a3b8; }
 
   .actions { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
@@ -99,10 +97,7 @@
   .btn-share:disabled { background: #475569; cursor: not-allowed; background-image: none; }
   .btn-stream { background: #f59e0b; color: #fff; }
 
-  .progress {
-    margin-top: 10px; height: 8px; background: #1e293b;
-    border-radius: 4px; overflow: hidden; display: none;
-  }
+  .progress { margin-top: 10px; height: 8px; background: #1e293b; border-radius: 4px; overflow: hidden; display: none; }
   .progress.active { display: block; }
   .progress-bar {
     height: 100%; width: 0%; transition: width .15s linear;
@@ -148,12 +143,39 @@
     font-size: 20px; cursor: pointer; font-weight: 700;
   }
 
+  .settings {
+    position: fixed; inset: 0; background: rgba(0,0,0,.85);
+    display: none; z-index: 300; padding: 20px; overflow-y: auto;
+  }
+  .settings.active { display: block; }
+  .settings-card {
+    max-width: 600px; margin: 40px auto; background: #0f172a;
+    border: 1px solid #334155; border-radius: 16px; padding: 22px;
+  }
+  .settings h2 { margin: 0 0 6px; font-size: 18px; }
+  .settings p { font-size: 13px; color: #94a3b8; line-height: 1.6; }
+  .settings label { display: block; font-size: 12px; color: #94a3b8; margin: 14px 0 6px; font-weight: 600; }
+  .settings input, .settings textarea {
+    width: 100%; padding: 12px; border-radius: 8px;
+    border: 1px solid #334155; background: #1e293b;
+    color: #e2e8f0; font-size: 13px; font-family: monospace;
+  }
+  .settings textarea { min-height: 100px; resize: vertical; }
+  .settings-actions { display: flex; gap: 8px; margin-top: 16px; }
+  .settings-actions button {
+    flex: 1; padding: 12px; border-radius: 10px; font-weight: 700;
+    cursor: pointer; border: none; font-size: 13px;
+  }
+  .btn-save { background: linear-gradient(135deg, #16a34a, #22c55e); color: #fff; }
+  .btn-close { background: #334155; color: #e2e8f0; }
+
   .note {
     font-size: 11px; color: #64748b; margin-top: 30px;
     line-height: 1.7; padding: 14px; border-radius: 12px;
     background: rgba(30,41,59,.3); border: 1px solid #1e293b;
   }
   .note strong { color: #94a3b8; }
+  .note a { color: #60a5fa; }
 
   .spinner {
     display: inline-block; width: 14px; height: 14px;
@@ -163,18 +185,27 @@
     vertical-align: middle;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  .help-btn {
+    position: fixed; top: 12px; right: 12px;
+    background: rgba(51,65,85,.7); color: #cbd5e1;
+    border: 1px solid #334155; padding: 8px 14px; border-radius: 8px;
+    font-size: 12px; font-weight: 600; cursor: pointer; z-index: 90;
+  }
 </style>
 </head>
 <body>
 
+<button class="help-btn" id="helpBtn">⚙️ API</button>
+
 <div class="wrap">
   <header>
-    <h1>⚡ Terabox Turbo</h1>
-    <p>16 Threads · Direct-to-Disk · Support 3GB+</p>
+    <h1>⚡ Terabox Turbo Pro</h1>
+    <p>Multi-API Fallback · 16 Threads · Support 3GB+</p>
   </header>
 
   <div class="input-box">
-    <input id="linkInput" type="text" placeholder="https://terabox.com/s/xxxx" autocomplete="off" />
+    <input id="linkInput" type="text" placeholder="https://terabox.com/s/xxxx atau 1024terabox.com/s/xxxx" autocomplete="off" />
     <button class="primary" id="parseBtn">Ambil</button>
   </div>
 
@@ -197,27 +228,62 @@
   <video id="videoPlayer" controls playsinline></video>
 </div>
 
+<div class="settings" id="settingsPanel">
+  <div class="settings-card">
+    <h2>⚙️ Pengaturan API</h2>
+    <p>Aplikasi ini otomatis mencoba semua API di bawah. Jika ingin menambahkan Worker sendiri (paling stabil), tempel URL-nya di sini.</p>
+    
+    <label>API Endpoints (satu per baris):</label>
+    <textarea id="apiList" placeholder="https://worker-kamu.workers.dev"></textarea>
+    
+    <div class="settings-actions">
+      <button class="btn-save" id="saveApi">💾 Simpan</button>
+      <button class="btn-close" id="closeApi">Tutup</button>
+    </div>
+
+    <label style="margin-top:24px">📖 Cara Deploy Worker Sendiri (5 menit):</label>
+    <p style="font-size:12px">
+      1. Buka <a href="https://dash.cloudflare.com/?to=/:account/workers" target="_blank" style="color:#60a5fa">dash.cloudflare.com</a> → Workers → Create<br>
+      2. Tempel kode Worker (buka <a href="https://github.com/basstimam/trauso" target="_blank" style="color:#60a5fa">github.com/basstimam/trauso</a> untuk referensi)<br>
+      3. Tambah Secret <code>TERABOX_COOKIE</code> dengan cookie ndus dari terabox.com<br>
+      4. Deploy → copy URL → tempel di kolom atas
+    </p>
+
+    <div class="settings-actions" style="margin-top:20px">
+      <button class="btn-close" id="resetApi" style="background:#dc2626;color:#fff">🔄 Reset Default</button>
+    </div>
+  </div>
+</div>
+
 <div class="note">
-  <strong>Mode Turbo:</strong> File ditulis langsung ke disk dengan <strong>16 koneksi paralel</strong> — RAM tidak terpakai meski file 3GB.<br>
-  <strong>Browser didukung:</strong> Chrome / Edge / Opera desktop → mode Turbo penuh. Firefox & browser mobile → otomatis pakai unduhan native browser (juga support 3GB, tapi 1 koneksi).<br>
-  <strong>Simpan ke Galeri:</strong> Hanya untuk file &lt; 500MB. File besar akan otomatis ke folder Downloads.
+  <strong>Info:</strong><br>
+  • <strong>Multi-API:</strong> Aplikasi otomatis coba semua API sampai berhasil.<br>
+  • <strong>Mode Turbo:</strong> 16 koneksi paralel + tulis langsung ke disk (Chrome/Edge desktop).<br>
+  • <strong>File 3GB+:</strong> Aman, tidak pakai RAM.<br>
+  • <strong>Tombol ⚙️ API</strong> di kanan atas untuk tambah Worker sendiri jika API publik gagal.
 </div>
 
 <script>
 /* ============================================================
    KONFIGURASI
    ============================================================ */
-const API_ENDPOINTS = [
-  'https://terabox-worker.robinkumarshakya103.workers.dev',
+const DEFAULT_ENDPOINTS = [
+  'https://terabox.hnn.workers.dev',
+  'https://terabox-dl.hhlab.workers.dev',
+  'https://terabox.vercel.app',
+  'https://terabox-api.vercel.app',
+  'https://api.teraboxdownloader.online',
 ];
-const THREADS = 16;                     // jumlah koneksi paralel
-const SHARE_MAX_SIZE = 500 * 1024 * 1024; // 500MB batas share ke galeri
+
+const THREADS = 16;
+const SHARE_MAX_SIZE = 500 * 1024 * 1024;
 
 /* ============================================================
    STATE
    ============================================================ */
 let currentFiles = [];
 let selected = new Set();
+let API_ENDPOINTS = loadEndpoints();
 
 /* ============================================================
    ELEMEN
@@ -234,29 +300,48 @@ const batchCount = $('batchCount');
 const batchDownload = $('batchDownload');
 const videoModal = $('videoModal');
 const videoPlayer = $('videoPlayer');
+const settingsPanel = $('settingsPanel');
+const apiList = $('apiList');
 
-/* Deteksi kemampuan browser */
 const HAS_FSA = typeof window.showSaveFilePicker === 'function';
 const HAS_SHARE = !!(navigator.canShare && navigator.share);
 
-/* Update badge engine */
+/* Update badge */
 if (HAS_FSA) {
-  engineBadge.textContent = `⚡ Turbo · ${THREADS} threads`;
+  engineBadge.textContent = `⚡ Turbo · ${THREADS}T`;
   engineBadge.classList.remove('warn');
 } else {
-  engineBadge.textContent = '🔄 Mode Native';
+  engineBadge.textContent = '🔄 Native';
   engineBadge.classList.add('warn');
 }
 
 /* ============================================================
-   PARSE LINK
+   ENDPOINT MANAGEMENT
+   ============================================================ */
+function loadEndpoints() {
+  try {
+    const saved = localStorage.getItem('tb_endpoints');
+    if (saved) {
+      const arr = JSON.parse(saved);
+      if (Array.isArray(arr) && arr.length > 0) return arr;
+    }
+  } catch (e) {}
+  return [...DEFAULT_ENDPOINTS];
+}
+
+function saveEndpoints() {
+  try { localStorage.setItem('tb_endpoints', JSON.stringify(API_ENDPOINTS)); } catch (e) {}
+}
+
+/* ============================================================
+   PARSE LINK — MULTI-API FALLBACK
    ============================================================ */
 async function parseLink() {
-  const url = linkInput.value.trim();
-  if (!url) return setStatus('Masukkan link Terabox dulu.', 'error');
+  const rawUrl = linkInput.value.trim();
+  if (!rawUrl) return setStatus('⚠️ Masukkan link Terabox dulu.', 'warn');
 
   parseBtn.disabled = true;
-  parseBtn.innerHTML = '<span class="spinner"></span>Loading';
+  parseBtn.innerHTML = '<span class="spinner"></span>';
   setStatus('Memproses link...');
   resultEl.innerHTML = '';
   currentFiles = [];
@@ -264,34 +349,117 @@ async function parseLink() {
   updateBatchBar();
   toolbar.style.display = 'none';
 
-  let lastError = 'Gagal mengambil data.';
+  const errors = [];
 
-  for (const base of API_ENDPOINTS) {
+  for (let i = 0; i < API_ENDPOINTS.length; i++) {
+    const base = API_ENDPOINTS[i].replace(/\/$/, '');
+    setStatus(`🔄 Mencoba API ${i + 1}/${API_ENDPOINTS.length}...`);
+
     try {
-      const res = await fetch(`${base}/api?url=${encodeURIComponent(url)}`);
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
-
-      if (!data.success || !data.files || data.files.length === 0) {
-        throw new Error(data.error || 'Tidak ada file ditemukan.');
+      const data = await callApi(base, rawUrl);
+      
+      if (!data || !data.files || data.files.length === 0) {
+        throw new Error('Tidak ada file');
       }
 
       currentFiles = data.files;
       renderFiles(data.files);
-      setStatus(`✅ Ditemukan ${data.files.length} file.`, 'success');
+      setStatus(`✅ Berhasil via API ${i + 1}. Ditemukan ${data.files.length} file.`, 'success');
       toolbar.style.display = 'flex';
       parseBtn.disabled = false;
       parseBtn.textContent = 'Ambil';
       return;
+
     } catch (err) {
-      lastError = err.message;
+      errors.push(`API ${i + 1}: ${err.message}`);
       continue;
     }
   }
 
-  setStatus(`❌ ${lastError}`, 'error');
+  // Semua gagal
+  setStatus(
+    `❌ Semua API gagal. Kemungkinan: API publik sedang mati atau link tidak valid.<br>` +
+    `<small style="opacity:.7">Klik tombol ⚙️ API di kanan atas untuk tempel Worker sendiri (5 menit setup, gratis, stabil).</small>`,
+    'error'
+  );
   parseBtn.disabled = false;
   parseBtn.textContent = 'Ambil';
+  console.warn('All APIs failed:', errors);
+}
+
+/* Panggil API dengan berbagai format URL yang umum dipakai */
+async function callApi(base, teraboxUrl) {
+  // Beberapa API pakai format berbeda, coba beberapa path
+  const paths = ['/api?url=', '/api?link=', '/?url=', '/download?url='];
+  
+  let lastErr = null;
+  
+  for (const path of paths) {
+    try {
+      const fullUrl = base + path + encodeURIComponent(teraboxUrl);
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000);
+
+      const res = await fetch(fullUrl, { signal: controller.signal });
+      clearTimeout(timeout);
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      
+      const data = await res.json();
+      
+      // Normalisasi berbagai bentuk response
+      const files = normalizeResponse(data);
+      if (files && files.length > 0) {
+        return { files };
+      }
+    } catch (e) {
+      lastErr = e;
+      continue;
+    }
+  }
+  
+  throw lastErr || new Error('Format tidak dikenal');
+}
+
+/* Normalisasi berbagai format response API */
+function normalizeResponse(data) {
+  if (!data) return null;
+
+  // Format 1: { success, files: [...] }
+  if (data.success && Array.isArray(data.files)) return data.files;
+
+  // Format 2: { ok: true, list: [...] }
+  if (data.ok && Array.isArray(data.list)) return data.list.map(remapFile);
+
+  // Format 3: { data: { list: [...] } }
+  if (data.data && Array.isArray(data.data.list)) return data.data.list.map(remapFile);
+
+  // Format 4: { data: { files: [...] } }
+  if (data.data && Array.isArray(data.data.files)) return data.data.files.map(remapFile);
+
+  // Format 5: array langsung
+  if (Array.isArray(data)) return data.map(remapFile);
+
+  // Format 6: { list: [...] }
+  if (Array.isArray(data.list)) return data.list.map(remapFile);
+
+  // Format 7: { file_name, download_url } single file
+  if (data.file_name && (data.download_url || data.dlink)) {
+    return [remapFile(data)];
+  }
+
+  return null;
+}
+
+/* Ubah field apapun menjadi format standar kita */
+function remapFile(f) {
+  return {
+    file_name: f.file_name || f.filename || f.name || f.server_filename || 'file',
+    size: f.size_formatted || f.size_str || (typeof f.size === 'number' ? formatBytes(f.size) : f.size) || f.file_size || '—',
+    size_bytes: typeof f.size === 'number' ? f.size : parseSize(f.size || f.size_formatted || 0),
+    download_url: f.download_url || f.downloadUrl || f.dlink || f.downloadLink || f.url,
+    streaming_url: f.streaming_url || f.streamUrl || f.play_url || f.download_url || f.dlink,
+  };
 }
 
 /* ============================================================
@@ -303,13 +471,13 @@ function renderFiles(files) {
       <div class="file-head">
         <div class="checkbox" data-idx="${i}"></div>
         <div class="file-info">
-          <div class="file-name">${esc(f.file_name || f.name || 'Tanpa nama')}</div>
-          <div class="file-size">${f.size || f.file_size || 'Ukuran tidak diketahui'}</div>
+          <div class="file-name">${esc(f.file_name)}</div>
+          <div class="file-size">${esc(f.size)}</div>
         </div>
       </div>
       <div class="actions">
         <button class="btn-dl" data-action="dl" data-idx="${i}">⚡ Unduh Turbo</button>
-        ${HAS_SHARE ? `<button class="btn-share" data-action="share" data-idx="${i}">📥 Simpan ke Galeri</button>` : ''}
+        ${HAS_SHARE ? `<button class="btn-share" data-action="share" data-idx="${i}">📥 Ke Galeri</button>` : ''}
         <button class="btn-stream" data-action="stream" data-idx="${i}">▶ Putar</button>
       </div>
       <div class="progress" data-progress="${i}"><div class="progress-bar"></div></div>
@@ -328,6 +496,7 @@ function renderFiles(files) {
     btn.addEventListener('click', () => {
       const idx = parseInt(btn.dataset.idx);
       const file = currentFiles[idx];
+      if (!file) return;
       if (btn.dataset.action === 'dl') handleDownload(file, idx, btn);
       if (btn.dataset.action === 'share') handleShare(file, idx, btn);
       if (btn.dataset.action === 'stream') handleStream(file);
@@ -352,75 +521,62 @@ function toggleSelect(idx, cbEl) {
 }
 
 function updateBatchBar() {
-  const n = selected.size;
-  if (n > 0) {
+  if (selected.size > 0) {
     batchBar.classList.add('active');
-    batchCount.textContent = `${n} file dipilih`;
+    batchCount.textContent = `${selected.size} file dipilih`;
   } else {
     batchBar.classList.remove('active');
   }
 }
 
 /* ============================================================
-   ⚡ MESIN TURBO — TULIS LANGSUNG KE DISK
+   TURBO DOWNLOAD
    ============================================================ */
-async function turboDownloadToHandle(url, totalSize, writable, onProgress) {
-  // Cek dukungan Range request
+async function turboDownload(url, totalSize, writable, onProgress) {
   let supportsRange = false;
+  let realSize = totalSize;
+
   try {
     const test = await fetch(url, { headers: { 'Range': 'bytes=0-0' } });
     supportsRange = test.status === 206;
     const cr = test.headers.get('content-range');
     if (cr) {
       const m = cr.match(/\/(\d+)/);
-      if (m) totalSize = parseInt(m[1], 10);
+      if (m) realSize = parseInt(m[1], 10);
     }
     try { test.body && test.body.cancel(); } catch (e) {}
-  } catch (e) {
-    supportsRange = false;
+  } catch (e) { supportsRange = false; }
+
+  if (!supportsRange || !realSize || realSize < 2 * 1024 * 1024) {
+    return streamSingle(url, writable, onProgress);
   }
 
-  // Fallback kalau server tidak support Range
-  if (!supportsRange || !totalSize || totalSize < 2 * 1024 * 1024) {
-    return streamSingleToWritable(url, writable, onProgress);
-  }
-
-  // === MULTI-THREAD ===
-  const numThreads = Math.min(THREADS, Math.ceil(totalSize / (1 * 1024 * 1024)));
-  const chunkSize = Math.ceil(totalSize / numThreads);
+  const numThreads = Math.min(THREADS, Math.ceil(realSize / (1 * 1024 * 1024)));
+  const chunkSize = Math.ceil(realSize / numThreads);
   let downloaded = 0;
-  const startTime = Date.now();
-
-  const progressTick = () => {
-    const elapsed = (Date.now() - startTime) / 1000;
-    const speed = elapsed > 0 ? downloaded / elapsed : 0;
-    onProgress(Math.min(downloaded / totalSize, 1), speed);
-  };
+  const start = Date.now();
 
   const tasks = [];
   for (let i = 0; i < numThreads; i++) {
-    const start = i * chunkSize;
-    const end = Math.min(start + chunkSize - 1, totalSize - 1);
-    if (start > end) continue;
+    const s = i * chunkSize;
+    const e = Math.min(s + chunkSize - 1, realSize - 1);
+    if (s > e) continue;
 
     tasks.push((async () => {
-      const res = await fetch(url, {
-        headers: { 'Range': `bytes=${start}-${end}` }
-      });
-      if (!res.ok && res.status !== 206) {
-        throw new Error(`HTTP ${res.status} on chunk ${i}`);
-      }
+      const res = await fetch(url, { headers: { 'Range': `bytes=${s}-${e}` } });
+      if (!res.ok && res.status !== 206) throw new Error(`HTTP ${res.status}`);
 
       const reader = res.body.getReader();
-      let position = start;
+      let pos = s;
 
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        await writable.write({ type: 'write', position, data: value });
-        position += value.length;
+        await writable.write({ type: 'write', position: pos, data: value });
+        pos += value.length;
         downloaded += value.length;
-        progressTick();
+        const elapsed = (Date.now() - start) / 1000;
+        onProgress(Math.min(downloaded / realSize, 1), elapsed > 0 ? downloaded / elapsed : 0);
       }
     })());
   }
@@ -428,38 +584,35 @@ async function turboDownloadToHandle(url, totalSize, writable, onProgress) {
   await Promise.all(tasks);
 }
 
-async function streamSingleToWritable(url, writable, onProgress) {
+async function streamSingle(url, writable, onProgress) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
   const total = parseInt(res.headers.get('content-length') || '0', 10);
   const reader = res.body.getReader();
-  let position = 0;
-  let downloaded = 0;
-  const startTime = Date.now();
+  let pos = 0, downloaded = 0;
+  const start = Date.now();
 
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
-    await writable.write({ type: 'write', position, data: value });
-    position += value.length;
+    await writable.write({ type: 'write', position: pos, data: value });
+    pos += value.length;
     downloaded += value.length;
-
-    const elapsed = (Date.now() - startTime) / 1000;
-    const speed = elapsed > 0 ? downloaded / elapsed : 0;
-    if (total) onProgress(downloaded / total, speed);
+    const elapsed = (Date.now() - start) / 1000;
+    if (total) onProgress(downloaded / total, elapsed > 0 ? downloaded / elapsed : 0);
   }
 }
 
 /* ============================================================
-   HANDLE DOWNLOAD — pintar pilih metode
+   HANDLE DOWNLOAD
    ============================================================ */
 async function handleDownload(file, idx, btn) {
-  const url = file.download_url || file.downloadUrl;
+  const url = file.download_url;
   if (!url) return setStatus('❌ Link unduhan tidak tersedia.', 'error');
 
   const fileName = file.file_name || 'terabox_file';
-  const fileSize = parseSize(file.size || file.file_size || '0');
+  const fileSize = file.size_bytes || parseSize(file.size);
 
   const card = btn.closest('.file-card');
   const progEl = card.querySelector(`[data-progress="${idx}"]`);
@@ -469,12 +622,11 @@ async function handleDownload(file, idx, btn) {
   const spdEl = progText.querySelector('.spd');
 
   btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span>Memulai';
+  btn.innerHTML = '<span class="spinner"></span>Mulai';
 
-  /* === JALUR 1: Mode Turbo (FSA API) === */
+  /* === MODE TURBO === */
   if (HAS_FSA) {
     try {
-      // Panggil picker DULU sebelum await apapun (user gesture requirement)
       const handle = await window.showSaveFilePicker({ suggestedName: fileName });
 
       progEl.classList.add('active');
@@ -483,7 +635,7 @@ async function handleDownload(file, idx, btn) {
 
       const writable = await handle.createWritable({ keepExistingData: false });
 
-      await turboDownloadToHandle(url, fileSize, writable, (p, speed) => {
+      await turboDownload(url, fileSize, writable, (p, speed) => {
         progBar.style.width = (p * 100).toFixed(1) + '%';
         pctEl.textContent = (p * 100).toFixed(0) + '%';
         spdEl.textContent = formatSpeed(speed);
@@ -494,11 +646,10 @@ async function handleDownload(file, idx, btn) {
       progBar.style.width = '100%';
       pctEl.textContent = '100%';
       spdEl.textContent = '✓ Selesai';
-      setStatus('✅ File selesai disimpan.', 'success');
+      setStatus('✅ File berhasil disimpan.', 'success');
 
       btn.disabled = false;
       btn.innerHTML = '⚡ Unduh Turbo';
-
       setTimeout(() => {
         progEl.classList.remove('active');
         progText.classList.remove('active');
@@ -507,23 +658,19 @@ async function handleDownload(file, idx, btn) {
       return;
 
     } catch (err) {
-      // User batalkan save dialog → jangan fallback
       if (err.name === 'AbortError') {
         btn.disabled = false;
         btn.innerHTML = '⚡ Unduh Turbo';
-        progEl.classList.remove('active');
-        progText.classList.remove('active');
         return;
       }
-      console.warn('Turbo gagal, fallback ke native:', err);
-      setStatus(`⚠️ Turbo gagal (${err.message}), pakai native...`, 'error');
+      console.warn('Turbo gagal, fallback native:', err);
+      setStatus(`⚠️ Turbo gagal, pakai native...`, 'warn');
     }
   }
 
-  /* === JALUR 2: Native download === */
+  /* === NATIVE FALLBACK === */
   triggerNative(url, fileName);
   setStatus('📂 File dikirim ke browser. Cek folder Downloads.', 'success');
-
   btn.disabled = false;
   btn.innerHTML = '⚡ Unduh Turbo';
 }
@@ -539,19 +686,18 @@ function triggerNative(url, fileName) {
 }
 
 /* ============================================================
-   SIMPAN KE GALERI (Web Share API)
+   SHARE / GALERI
    ============================================================ */
 async function handleShare(file, idx, btn) {
-  const url = file.download_url || file.downloadUrl;
+  const url = file.download_url;
   if (!url) return setStatus('❌ Link tidak tersedia.', 'error');
 
   const fileName = file.file_name || 'terabox_file.mp4';
-  const fileSize = parseSize(file.size || file.file_size || '0');
+  const fileSize = file.size_bytes || parseSize(file.size);
 
-  // File besar tidak bisa via share
   if (fileSize > SHARE_MAX_SIZE) {
     triggerNative(url, fileName);
-    setStatus(`⚠️ File ${formatBytes(fileSize)} terlalu besar untuk share. Diunduh ke Downloads.`, 'error');
+    setStatus(`⚠️ File ${formatBytes(fileSize)} terlalu besar. Diunduh ke Downloads.`, 'warn');
     return;
   }
 
@@ -575,18 +721,17 @@ async function handleShare(file, idx, btn) {
     const reader = res.body.getReader();
     const parts = [];
     let received = 0;
-    const startTime = Date.now();
+    const start = Date.now();
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
       parts.push(value);
       received += value.length;
-      const elapsed = (Date.now() - startTime) / 1000;
-      const speed = elapsed > 0 ? received / elapsed : 0;
+      const elapsed = (Date.now() - start) / 1000;
       progBar.style.width = ((received / total) * 100).toFixed(1) + '%';
       pctEl.textContent = ((received / total) * 100).toFixed(0) + '%';
-      spdEl.textContent = formatSpeed(speed);
+      spdEl.textContent = formatSpeed(elapsed > 0 ? received / elapsed : 0);
     }
 
     const blob = new Blob(parts, { type: 'video/mp4' });
@@ -594,7 +739,7 @@ async function handleShare(file, idx, btn) {
 
     if (!navigator.canShare({ files: [fileObj] })) {
       triggerNative(url, fileName);
-      setStatus('⚠️ HP tidak support share file. Diunduh ke Downloads.', 'error');
+      setStatus('⚠️ HP tidak support share. Diunduh ke Downloads.', 'warn');
       return;
     }
 
@@ -602,14 +747,11 @@ async function handleShare(file, idx, btn) {
     setStatus('✅ Pilih "Simpan ke Photos" pada menu.', 'success');
 
   } catch (err) {
-    if (err.name === 'AbortError') {
-      setStatus('Dibatalkan.');
-    } else {
-      setStatus(`❌ ${err.message}`, 'error');
-    }
+    if (err.name === 'AbortError') setStatus('Dibatalkan.');
+    else setStatus(`❌ ${err.message}`, 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = '📥 Simpan ke Galeri';
+    btn.innerHTML = '📥 Ke Galeri';
     setTimeout(() => {
       progEl.classList.remove('active');
       progText.classList.remove('active');
@@ -621,7 +763,7 @@ async function handleShare(file, idx, btn) {
    STREAM
    ============================================================ */
 function handleStream(file) {
-  const url = file.streaming_url || file.streamUrl || file.download_url;
+  const url = file.streaming_url || file.download_url;
   if (!url) return setStatus('❌ Link stream tidak tersedia.', 'error');
   videoPlayer.src = url;
   videoModal.classList.add('active');
@@ -635,29 +777,23 @@ $('modalClose').addEventListener('click', () => {
 });
 
 /* ============================================================
-   BATCH DOWNLOAD
+   BATCH
    ============================================================ */
 batchDownload.addEventListener('click', async () => {
   if (selected.size === 0) return;
 
-  // Batch hanya bisa via native (karena FSA butuh interaksi per file)
-  const indices = Array.from(selected).sort((a, b) => a - b);
-
-  if (HAS_FSA) {
-    setStatus('ℹ️ Mode Turbo hanya bisa 1 file per dialog. Mengunduh via native untuk batch...', 'error');
-  }
-
   batchDownload.disabled = true;
-  batchDownload.innerHTML = '<span class="spinner"></span>Memproses';
+  batchDownload.innerHTML = '<span class="spinner"></span>Proses';
 
+  const indices = Array.from(selected).sort((a, b) => a - b);
   let ok = 0;
+
   for (const idx of indices) {
     const file = currentFiles[idx];
-    const url = file.download_url || file.downloadUrl;
-    if (url) {
-      triggerNative(url, file.file_name || 'terabox_file');
+    if (file.download_url) {
+      triggerNative(file.download_url, file.file_name || 'terabox_file');
       ok++;
-      await new Promise(r => setTimeout(r, 800));
+      await new Promise(r => setTimeout(r, 900));
     }
   }
 
@@ -689,11 +825,42 @@ $('deselectAll').addEventListener('click', () => {
 });
 
 /* ============================================================
+   SETTINGS
+   ============================================================ */
+$('helpBtn').addEventListener('click', () => {
+  apiList.value = API_ENDPOINTS.join('\n');
+  settingsPanel.classList.add('active');
+});
+
+$('closeApi').addEventListener('click', () => {
+  settingsPanel.classList.remove('active');
+});
+
+$('saveApi').addEventListener('click', () => {
+  const lines = apiList.value.split('\n').map(l => l.trim()).filter(l => l);
+  if (lines.length === 0) {
+    setStatus('⚠️ Minimal 1 endpoint.', 'warn');
+    return;
+  }
+  API_ENDPOINTS = lines;
+  saveEndpoints();
+  setStatus('✅ API endpoints disimpan.', 'success');
+  settingsPanel.classList.remove('active');
+});
+
+$('resetApi').addEventListener('click', () => {
+  API_ENDPOINTS = [...DEFAULT_ENDPOINTS];
+  saveEndpoints();
+  apiList.value = API_ENDPOINTS.join('\n');
+  setStatus('🔄 API direset ke default.', 'success');
+});
+
+/* ============================================================
    UTIL
    ============================================================ */
 function esc(s) {
   const d = document.createElement('div');
-  d.textContent = s;
+  d.textContent = String(s || '');
   return d.innerHTML;
 }
 
@@ -727,10 +894,13 @@ function setStatus(msg, cls = '') {
 }
 
 /* ============================================================
-   EVENT
+   INIT
    ============================================================ */
 parseBtn.addEventListener('click', parseLink);
 linkInput.addEventListener('keydown', e => { if (e.key === 'Enter') parseLink(); });
+
+console.log('⚡ Terabox Turbo Pro loaded');
+console.log('Endpoints:', API_ENDPOINTS);
 </script>
 </body>
-  </html>
+</html>
