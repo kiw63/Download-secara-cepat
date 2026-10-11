@@ -54,6 +54,24 @@ body.authenticated .authGate{display:none}
 .actionDownload .actionIcon{color:#25f4ee}
 @media(min-width:700px){.sourceSheetBackdrop{align-items:center;justify-content:center}.sourceSheet{max-width:430px;border-radius:22px}}
 
+
+/* Blink mobile polish: clearer spacing, lighter startup, readable controls */
+.feedRightActions{right:8px;bottom:clamp(70px,10vh,110px);gap:clamp(9px,1.6vh,15px);max-height:calc(100% - 150px);overflow-y:auto;overflow-x:hidden;padding:5px 2px;scrollbar-width:none}
+.feedRightActions::-webkit-scrollbar{display:none}
+.actionItem{min-width:56px;gap:5px;font-size:11px;line-height:1.2;white-space:nowrap;text-align:center;padding:2px 0}
+.actionIcon{width:40px;height:40px;font-size:21px;flex-shrink:0}
+.feedOverlay{left:14px;right:78px;bottom:calc(14px + env(safe-area-inset-bottom));max-width:calc(100% - 92px)}
+.creator{font-size:.95rem;line-height:1.35;margin-bottom:8px;overflow-wrap:anywhere}
+.description{font-size:.9rem;line-height:1.5;margin:0 0 9px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.hashtags{font-size:.78rem;line-height:1.5;margin-bottom:7px}
+.feedCaption{gap:7px;line-height:1.35;flex-wrap:wrap}.feedCaption span{font-size:.78rem;line-height:1.4}
+.feedCaption .avatar{width:27px;height:27px}
+.feedVideo{background:#050505;contain:strict}
+.feedStage{scroll-behavior:auto;touch-action:pan-y;min-height:0}
+.feedCard{contain:layout paint style}
+button{touch-action:manipulation}
+@media(max-width:520px){.feedStage{height:calc(100svh - 145px);min-height:0}.feedRightActions{right:7px;bottom:calc(76px + env(safe-area-inset-bottom));gap:8px;max-height:calc(100% - 170px)}.actionIcon{width:37px;height:37px;font-size:20px}.actionItem{min-width:48px;font-size:10px}.feedOverlay{left:12px;right:65px;bottom:calc(12px + env(safe-area-inset-bottom));max-width:calc(100% - 78px)}.feedCaption span{font-size:.74rem}.feedTabs{padding:12px 10px}.bottomNav{padding-bottom:calc(5px + env(safe-area-inset-bottom))}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
 </head>
 <body>
@@ -196,7 +214,7 @@ function renderFeed(){
  if(!allRecords.length){const emp=document.createElement('div');emp.className='feedPlaceholder';emp.innerHTML='<div class="placeholderGlyph">＋</div><strong>Belum ada video di Blink</strong><p>Unggah video, lalu tekan Post ke Blink untuk menambahkannya ke feed.</p><button class="primaryBtn" id="feedUploadBtn">Tambah video</button>';stage.append(emp);$('feedUploadBtn').onclick=()=>setPage('upload');return;}
  allRecords.forEach((active,index)=>{
   const card=document.createElement('article');card.className='feedCard';card.dataset.videoId=active.id;
-  const video=document.createElement('video');video.className='feedVideo';video.src=getUrl(active);video.controls=true;video.playsInline=true;video.preload=index===0?'metadata':'none';video.setAttribute('aria-label','Video '+(active.name||''));card.append(video);
+  const video=document.createElement('video');video.className='feedVideo';video.src=getUrl(active);video.controls=true;video.playsInline=true;video.preload=index===0?'metadata':'none';video.disablePictureInPicture=true;video.setAttribute('aria-label','Video '+(active.name||''));card.append(video);
   const overlay=document.createElement('div');overlay.className='feedOverlay';const owner=active.owner||currentUser;const users=readUsers();const display=(users[owner]?.displayName||owner||'BlinkUser');overlay.innerHTML=`<div class="creator">@${safeText(display)} <span style="color:var(--cyan)">✓</span> <span class="muted" style="font-size:.77rem;font-weight:500">· Lokal</span></div><p class="description">${safeText(active.caption||active.name||'Video Blink')}</p><div class="hashtags">#Blink #Video</div><div class="feedCaption"><div class="avatar">${safeText(display.slice(0,1).toUpperCase())}</div><span>Audio asli · tersimpan di perangkat ini</span></div>`;card.append(overlay);
   const actions=document.createElement('div');actions.className='feedRightActions';
   const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=(display||'B').slice(0,1).toUpperCase();actions.append(avatar);
@@ -208,7 +226,7 @@ function renderFeed(){
   card.append(actions);stage.append(card);
  });
 }
-function renderGrids(){const root=$('profileGrid'),explore=$('exploreGrid');const query=($('exploreSearch').value||'').trim().toLowerCase();const list=allRecords.filter(v=>(v.name||'').toLowerCase().includes(query));for(const el of [root,explore])el.innerHTML='';if(!allRecords.length){root.innerHTML='<div class="emptyGrid">Belum ada video lokal. Buka Upload untuk memilih video.</div>';explore.innerHTML='<div class="emptyGrid">Belum ada video yang tersimpan di browser ini.</div>';return}for(const v of allRecords){const tile=document.createElement('div');tile.className='gridVideo';const vid=document.createElement('video');vid.src=getUrl(v);vid.preload='metadata';vid.muted=true;vid.playsInline=true;vid.addEventListener('mouseenter',()=>vid.play().catch(()=>{}));vid.addEventListener('mouseleave',()=>{vid.pause();vid.currentTime=0});tile.append(vid);const lab=document.createElement('span');lab.className='gridLabel';lab.textContent='▷ '+(v.name||'Video');tile.append(lab);tile.onclick=()=>{setPage('home');toast('Video lokal dipilih untuk pratinjau feed.');};root.append(tile);if((v.name||'').toLowerCase().includes(query)){const etile=tile.cloneNode(true);const ev=etile.querySelector('video');ev.src=getUrl(v);etile.onclick=()=>{setPage('home');toast('Video lokal dipilih untuk pratinjau feed.');};explore.append(etile)}}if(!explore.children.length)explore.innerHTML='<div class="emptyGrid">Tidak ada video yang cocok dengan pencarian.</div>'}
+function renderGrids(){const root=$('profileGrid'),explore=$('exploreGrid');const query=($('exploreSearch').value||'').trim().toLowerCase();const list=allRecords.filter(v=>(v.name||'').toLowerCase().includes(query));for(const el of [root,explore])el.innerHTML='';if(!allRecords.length){root.innerHTML='<div class="emptyGrid">Belum ada video lokal. Buka Upload untuk memilih video.</div>';explore.innerHTML='<div class="emptyGrid">Belum ada video yang tersimpan di browser ini.</div>';return}for(const v of allRecords){const tile=document.createElement('div');tile.className='gridVideo';const vid=document.createElement('video');vid.src=getUrl(v);vid.preload='none';vid.muted=true;vid.playsInline=true;vid.loading='lazy';vid.addEventListener('mouseenter',()=>vid.play().catch(()=>{}));vid.addEventListener('mouseleave',()=>{vid.pause();vid.currentTime=0});tile.append(vid);const lab=document.createElement('span');lab.className='gridLabel';lab.textContent='▷ '+(v.name||'Video');tile.append(lab);tile.onclick=()=>{setPage('home');toast('Video lokal dipilih untuk pratinjau feed.');};root.append(tile);if((v.name||'').toLowerCase().includes(query)){const etile=tile.cloneNode(true);const ev=etile.querySelector('video');ev.src=getUrl(v);etile.onclick=()=>{setPage('home');toast('Video lokal dipilih untuk pratinjau feed.');};explore.append(etile)}}if(!explore.children.length)explore.innerHTML='<div class="emptyGrid">Tidak ada video yang cocok dengan pencarian.</div>'}
 async function refresh(){allRecords=await getAll();$('accountLocalCount').textContent=allRecords.length+' video lokal ditemukan; tidak ada yang dihapus oleh pembaruan ini.';$('localFollowing').textContent='0';renderFeed();renderGrids()}
 // Feed tabs are visual states; this local starter has no remote social graph yet.
 document.querySelectorAll('.feedTab').forEach(b=>b.addEventListener('click',()=>{feedMode=b.dataset.feed;document.querySelectorAll('.feedTab').forEach(x=>x.classList.toggle('active',x===b));toast(feedMode==='following'?'Feed Teman memerlukan akun dan backend.':'Menampilkan koleksi lokal yang tersedia.')}));
