@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<title>Blink — Video untuk Semua</title>
+<style>
+:root{color-scheme:dark;--bg:#000;--panel:#151515;--panel2:#222;--line:#303030;--text:#fff;--muted:#a5a5a5;--cyan:#25f4ee;--pink:#fe2c55;--good:#27d17f;--warn:#ffd166;--radius:14px}
+*{box-sizing:border-box}html{scroll-behavior:smooth;background:#000;min-height:100%;overflow-y:auto}body{overflow-y:auto;overscroll-behavior-y:auto}body{margin:0;min-height:100vh;background:#000;color:var(--text);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}button,input,textarea,select{font:inherit}button{color:inherit;cursor:pointer}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}button:disabled{opacity:.48;cursor:not-allowed}.hidden{display:none!important}
+.topbar{position:sticky;top:0;z-index:30;height:60px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;background:#000e;backdrop-filter:blur(16px);border-bottom:1px solid #ffffff0e}.brand{display:flex;align-items:center;gap:8px;font-weight:950;font-size:1.35rem;letter-spacing:-.8px}.brandMark{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;background:linear-gradient(115deg,var(--cyan) 0 48%,var(--pink) 52%);color:#000;font-size:20px;font-weight:1000}.topActions{display:flex;align-items:center;gap:8px}.iconBtn{width:40px;height:40px;border:0;border-radius:50%;background:transparent;display:grid;place-items:center;font-size:22px}.iconBtn:hover{background:#ffffff12}.searchBtn{border:1px solid #393939;background:#181818;border-radius:22px;padding:9px 14px;color:#ddd}
+.app{padding-bottom:78px;min-height:calc(100vh - 60px)}.page{display:none}.page.active{display:block}.homeLayout{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:minmax(0,620px) 310px;justify-content:center;gap:28px;padding:0 16px}.feedColumn{min-width:0}.feedTabs{position:sticky;top:60px;z-index:10;display:flex;justify-content:center;gap:21px;padding:14px 12px;background:#000d;backdrop-filter:blur(10px)}.feedTab{border:0;background:transparent;color:#a7a7a7;font-weight:750;padding:3px 0;position:relative}.feedTab.active{color:#fff}.feedTab.active:after{content:"";position:absolute;height:3px;background:linear-gradient(90deg,var(--cyan),var(--pink));border-radius:3px;bottom:-8px;left:12%;right:12%}.feedStage{position:relative;width:100%;min-height:min(76vh,790px);height:min(76vh,790px);background:#090909;border:1px solid #202020;border-radius:10px;overflow-y:auto;overflow-x:hidden;overscroll-behavior-y:contain;scroll-snap-type:y mandatory;isolation:isolate;scrollbar-width:none}.feedStage::-webkit-scrollbar{display:none}.feedCard{position:relative;width:100%;height:100%;min-height:100%;scroll-snap-align:start;scroll-snap-stop:always;overflow:hidden;background:#090909}.feedCard .feedVideo{position:absolute;inset:0}.feedCard .feedOverlay{z-index:3}.feedCard .feedRightActions{z-index:4}.feedVideo{width:100%;height:100%;object-fit:contain;background:#050505;display:block}.feedPlaceholder{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:26px;background:radial-gradient(ellipse at 50% 40%,#232323 0,#080808 48%,#000 100%);color:#fff}.placeholderGlyph{font-size:54px;line-height:1;margin-bottom:14px}.feedPlaceholder p{max-width:260px;color:#aaa;margin:8px 0 16px}.primaryBtn{border:0;border-radius:6px;padding:11px 17px;font-weight:800;color:#050505;background:linear-gradient(100deg,var(--cyan),#f7f7f7 48%,var(--pink));}.secondaryBtn{background:#202020;border:1px solid #424242;border-radius:8px;padding:10px 14px;font-weight:750}.outlineBtn{background:transparent;border:1px solid #4a4a4a;border-radius:7px;padding:9px 12px;font-weight:750}.feedOverlay{position:absolute;left:15px;right:82px;bottom:15px;z-index:3;text-shadow:0 1px 6px #000;pointer-events:none}.creator{font-weight:850;font-size:1rem;margin-bottom:5px}.description{font-size:.92rem;line-height:1.4;margin:0 0 8px;overflow-wrap:anywhere}.hashtags{color:#fff;font-weight:700;font-size:.83rem}.feedRightActions{position:absolute;right:10px;bottom:34px;z-index:4;display:flex;align-items:center;flex-direction:column;gap:17px}.actionItem{border:0;background:transparent;min-width:50px;padding:0;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:700;text-shadow:0 1px 4px #000}.actionIcon{width:42px;height:42px;border-radius:50%;background:#2a2a2a;border:1px solid #ffffff24;display:grid;place-items:center;font-size:23px;box-shadow:0 3px 10px #0008}.actionItem.liked .actionIcon{color:var(--pink)}.actionItem.saved .actionIcon{color:var(--cyan)}.avatar{width:42px;height:42px;border-radius:50%;background:#303030;border:2px solid #fff;display:grid;place-items:center;font-weight:850;overflow:hidden}.avatar img{width:100%;height:100%;object-fit:cover}.musicLine{font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.feedCaption{display:flex;align-items:center;gap:8px;margin-top:7px}.feedCaption .avatar{width:30px;height:30px;flex-shrink:0}.feedCaption span{font-size:.88rem;font-weight:800}.desktopSide{padding-top:28px}.sideCard{border-bottom:1px solid #282828;padding:18px 0}.sideCard h3{font-size:.95rem;color:#eee;margin:0 0 13px}.sideMuted{font-size:.79rem;color:#888}.suggestion{display:flex;align-items:center;gap:10px;margin:12px 0}.suggestion .avatar{border:0;width:40px;height:40px}.suggestionText{flex:1;min-width:0}.suggestionText b{display:block;font-size:.86rem}.suggestionText span{display:block;color:#888;font-size:.76rem}.followBtn{border:1px solid var(--pink);background:transparent;color:var(--pink);border-radius:5px;padding:6px 10px;font-size:.8rem;font-weight:800}.tagCloud{display:flex;flex-wrap:wrap;gap:7px}.tag{border:1px solid #303030;border-radius:20px;background:#131313;color:#cfcfcf;padding:6px 9px;font-size:.76rem}
+.bottomNav{position:fixed;bottom:0;left:0;right:0;height:68px;z-index:40;display:flex;justify-content:space-around;align-items:center;padding:5px 8px calc(5px + env(safe-area-inset-bottom));background:#080808f5;border-top:1px solid #292929;backdrop-filter:blur(18px)}.navItem{min-width:52px;border:0;background:transparent;color:#888;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.68rem;font-weight:650}.navItem .navIcon{font-size:23px;line-height:1.1}.navItem.active{color:#fff}.navItem.active .navIcon{color:#fff}.createNav{width:42px;height:31px;background:#fff;color:#000!important;border-radius:7px;border-left:4px solid var(--cyan);border-right:4px solid var(--pink);font-size:25px!important;font-weight:500;display:grid;place-items:center;line-height:1}
+.pageHeader{max-width:980px;margin:0 auto;padding:22px 18px 14px;display:flex;align-items:center;justify-content:space-between;gap:14px}.pageHeader h1{margin:0;font-size:1.35rem}.pageHeader p{margin:4px 0 0;color:#999;font-size:.86rem}.contentWrap{max-width:980px;margin:0 auto;padding:0 18px 32px}.inboxStories{display:flex;gap:20px;overflow-x:auto;padding:8px 0 20px;border-bottom:1px solid #252525}.story{min-width:65px;width:65px;text-align:center;font-size:.75rem;color:#ccc}.storyRing{width:62px;height:62px;border-radius:50%;padding:3px;margin:0 auto 6px;background:linear-gradient(135deg,var(--cyan),var(--pink));}.storyInner{height:100%;width:100%;border-radius:50%;background:#202020;border:3px solid #000;display:grid;place-items:center;font-size:23px}.noticeRow{display:flex;gap:14px;align-items:center;padding:16px 0;border-bottom:1px solid #242424}.noticeIcon{width:55px;height:55px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-size:23px;background:#222}.noticeText{flex:1;min-width:0}.noticeText b{display:block;font-size:.95rem}.noticeText p{color:#aaa;margin:3px 0 0;font-size:.84rem}.unread{width:9px;height:9px;border-radius:50%;background:var(--pink)}
+.profileTop{display:grid;grid-template-columns:116px 1fr;gap:20px;align-items:center;padding:10px 0 20px}.profileAvatar{width:100px;height:100px;border-radius:50%;display:grid;place-items:center;background:#262626;font-size:38px;border:1px solid #555}.profileName{font-size:1.5rem;line-height:1.2;font-weight:900;overflow-wrap:anywhere}.profileHandle{color:#aaa;margin-top:5px}.stats{display:flex;gap:22px;margin:16px 0}.stats b{display:block;font-size:1.08rem}.stats span{font-size:.78rem;color:#999}.profileActions{display:flex;gap:8px;flex-wrap:wrap}.bio{margin:0 0 18px;color:#eee;white-space:pre-wrap}.profileTabs{display:flex;justify-content:space-around;border-bottom:1px solid #292929;margin:0 -18px 12px}.profileTab{border:0;background:transparent;color:#888;padding:13px 10px;flex:1;border-bottom:2px solid transparent}.profileTab.active{color:#fff;border-bottom-color:#fff}.videoGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}.gridVideo{position:relative;aspect-ratio:3/4;background:#171717;overflow:hidden}.gridVideo video{width:100%;height:100%;object-fit:cover}.gridVideo .gridLabel{position:absolute;bottom:7px;left:7px;background:#0009;font-size:.7rem;padding:2px 5px;border-radius:4px;max-width:95%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.emptyGrid{grid-column:1/-1;color:#888;text-align:center;padding:45px 15px;border:1px dashed #333}
+.uploadPanel{max-width:760px;margin:0 auto;padding:0 18px 36px}.uploadPicker{border:1px dashed #5b5b5b;border-radius:14px;min-height:210px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:25px;background:#0b0b0b}.uploadPicker input[type=file]{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}.uploadPicker .bigPlus{font-size:42px;color:#fff;margin-bottom:7px}.uploadPicker p{color:#999;margin:7px 0 15px}.uploadList{margin-top:17px;display:grid;gap:9px}.uploadRow{display:flex;gap:10px;align-items:center;border:1px solid #303030;background:#111;border-radius:9px;padding:10px}.fileGlyph{width:42px;height:52px;background:#252525;border-radius:5px;display:grid;place-items:center;flex-shrink:0;font-size:22px}.fileDetail{flex:1;min-width:0}.fileDetail strong{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.86rem}.fileDetail span{font-size:.76rem;color:#999}.removeFile{border:0;background:transparent;color:#bbb;font-size:20px;padding:6px}.uploadNotice{margin-top:14px;padding:12px;border:1px solid #53462d;background:#1b1710;border-radius:9px;color:#e8d3a0;font-size:.82rem}.progressTrack{height:4px;background:#343434;border-radius:5px;overflow:hidden;margin-top:7px}.progressBar{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--pink));transition:width .3s}
+.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.panel{border:1px solid #303030;background:#101010;border-radius:12px;padding:18px}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:.84rem;color:#ddd;font-weight:750}.field input,.field textarea{width:100%;border:1px solid #414141;border-radius:7px;padding:12px;background:#080808;color:#fff}.field textarea{min-height:84px;resize:vertical}.field small{color:#888;font-size:.75rem}.accountHint{border-left:3px solid var(--pink);padding:10px 12px;background:#151012;color:#d4b8bd;font-size:.82rem;margin-top:13px}.toolbar{display:flex;gap:8px;flex-wrap:wrap}.searchInput{width:min(360px,65vw);border:1px solid #333;background:#161616;color:#fff;border-radius:24px;padding:10px 14px}.toast{position:fixed;left:50%;bottom:86px;transform:translate(-50%,15px);z-index:100;background:#f4f4f4;color:#111;border-radius:9px;padding:11px 16px;max-width:calc(100% - 28px);font-size:.85rem;font-weight:700;opacity:0;pointer-events:none;transition:.2s;box-shadow:0 10px 30px #0008}.toast.show{opacity:1;transform:translate(-50%,0)}.modalBackdrop{position:fixed;inset:0;z-index:80;background:#000c;display:none;align-items:center;justify-content:center;padding:18px}.modalBackdrop.show{display:flex}.modalCard{width:min(460px,100%);max-height:85vh;overflow:auto;border:1px solid #333;border-radius:16px;background:#101010;padding:21px}.modalTop{display:flex;justify-content:space-between;align-items:center}.modalTop h2{font-size:1.15rem;margin:0}.xBtn{border:0;background:#222;border-radius:50%;height:34px;width:34px;font-size:20px}.logoAnimation{font-size:3.6rem;text-align:center;font-weight:950;letter-spacing:-4px;margin:20px 0 6px;animation:logoIn .9s cubic-bezier(.16,1,.3,1) both}.logoAnimation span{color:var(--pink);text-shadow:3px 0 var(--cyan)}@keyframes logoIn{from{opacity:0;filter:blur(12px);transform:scale(.75)}to{opacity:1;filter:blur(0);transform:scale(1)}}.muted{color:#999}.tiny{font-size:.76rem;color:#888}.hr{height:1px;background:#2b2b2b;border:0;margin:18px 0}
+@media(max-width:860px){.homeLayout{display:block;max-width:620px;padding:0}.desktopSide{display:none}.feedTabs{top:60px}.feedStage{height:calc(100svh - 151px);min-height:480px;border-radius:0;border-left:0;border-right:0;border-top:0;border-bottom:0}.feedCard{height:100%;min-height:100%}.feedRightActions{right:8px;bottom:28px;gap:15px}.feedOverlay{left:14px;right:76px;bottom:12px}.topbar{padding:0 13px}.searchBtn{padding:8px 11px}.contentWrap{padding-left:15px;padding-right:15px}.pageHeader{padding-left:15px;padding-right:15px}.app{padding-bottom:75px}}
+@media(max-width:520px){.brand{font-size:1.22rem}.topbar{height:56px}.feedTabs{top:56px}.feedStage{height:calc(100svh - 145px);min-height:450px}.feedCard{height:100%;min-height:100%}.bottomNav{height:65px}.profileTop{grid-template-columns:76px 1fr;gap:13px}.profileAvatar{width:72px;height:72px;font-size:28px}.profileName{font-size:1.2rem}.stats{gap:14px;margin:12px 0}.stats b{font-size:.98rem}.stats span{font-size:.71rem}.formGrid{grid-template-columns:1fr}.pageHeader h1{font-size:1.18rem}.searchInput{width:55vw}.uploadPicker{min-height:185px}.noticeRow{gap:11px}.noticeIcon{width:48px;height:48px}.videoGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(min-width:861px){.feedStage{height:min(76vh,790px)}}
+
+/* Authentication gate: content remains hidden until a local account signs in. */
+body:not(.authenticated)>header.topbar,body:not(.authenticated)>.app,body:not(.authenticated)>nav.bottomNav{display:none!important}
+.authGate{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;padding:22px 16px;background:radial-gradient(ellipse at 15% 15%,#082c31 0,transparent 36%),radial-gradient(ellipse at 90% 90%,#35121d 0,transparent 35%),#050505;overflow:auto}
+body.authenticated .authGate{display:none}
+.authCard{width:min(440px,100%);border:1px solid #30383b;border-radius:20px;padding:25px 22px;background:#0c0c0cf2;box-shadow:0 18px 65px #000b}
+.authBrand{display:flex;align-items:center;justify-content:center;gap:10px;font-size:2.15rem;font-weight:950;letter-spacing:-1px;margin:0 0 4px}
+.authBrand .brandMark{width:38px;height:38px;font-size:25px}
+.authTagline{text-align:center;color:#a8a8a8;font-size:.9rem;margin:0 0 22px}
+.authTitle{font-size:1.2rem;font-weight:850;margin:0 0 5px}
+.authSub{font-size:.82rem;color:#999;margin:0 0 17px}
+.authField{display:grid;gap:6px;margin:12px 0}
+.authField label{font-size:.82rem;color:#ddd;font-weight:750}
+.authField input{width:100%;min-height:46px;border:1px solid #383838;border-radius:9px;padding:12px;background:#060606;color:#fff}
+.authField input:focus{border-color:var(--cyan);outline:2px solid #25f4ee30}
+.authSubmit{width:100%;min-height:47px;margin-top:9px}
+.authSwitch{display:block;width:100%;border:0;background:transparent;color:var(--cyan);padding:13px 8px 4px;font-size:.87rem;font-weight:750}
+.authError{min-height:20px;color:#ff6a86;font-size:.82rem;margin:10px 0 0;overflow-wrap:anywhere}
+.authSecurity{margin:16px 0 0;padding-top:13px;border-top:1px solid #252525;color:#797979;font-size:.72rem;line-height:1.5;text-align:center}
+.authHidden{display:none!important}
+@media(max-width:420px){.authCard{padding:22px 18px}.authBrand{font-size:1.9rem}}
+
+
+/* Blink upload source chooser */
+.sourceSheetBackdrop{position:fixed;inset:0;background:#0009;z-index:1000;display:none;align-items:flex-end}
+.sourceSheetBackdrop.open{display:flex}
+.sourceSheet{width:100%;background:#191919;color:#f5f5f5;border-radius:26px 26px 0 0;padding:18px 20px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -12px 45px #0008}
+.sourceHandle{width:64px;height:5px;border-radius:10px;background:#777;margin:0 auto 22px}
+.sourceChoices{display:flex;gap:18px;align-items:flex-start}
+.sourceChoice{flex:1;min-height:112px;border:1px solid #393939;background:#242424;border-radius:16px;color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;font-weight:750;font-size:15px}
+.sourceChoice .sourceIcon{font-size:32px}
+.sourceChoice:active{background:#333}
+.actionDelete .actionIcon{color:#ff6681}
+.actionDownload .actionIcon{color:#25f4ee}
+@media(min-width:700px){.sourceSheetBackdrop{align-items:center;justify-content:center}.sourceSheet{max-width:430px;border-radius:22px}}
+
+
+/* Blink mobile polish: clearer spacing, lighter startup, readable controls */
+.feedRightActions{right:8px;bottom:clamp(70px,10vh,110px);gap:clamp(9px,1.6vh,15px);max-height:calc(100% - 150px);overflow-y:auto;overflow-x:hidden;padding:5px 2px;scrollbar-width:none}
+.feedRightActions::-webkit-scrollbar{display:none}
+.actionItem{min-width:56px;gap:5px;font-size:11px;line-height:1.2;white-space:nowrap;text-align:center;padding:2px 0}
+.actionIcon{width:40px;height:40px;font-size:21px;flex-shrink:0}
+.feedOverlay{left:14px;right:78px;bottom:calc(14px + env(safe-area-inset-bottom));max-width:calc(100% - 92px)}
+.creator{font-size:.95rem;line-height:1.35;margin-bottom:8px;overflow-wrap:anywhere}
+.description{font-size:.9rem;line-height:1.5;margin:0 0 9px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.hashtags{font-size:.78rem;line-height:1.5;margin-bottom:7px}
+.feedCaption{gap:7px;line-height:1.35;flex-wrap:wrap}.feedCaption span{font-size:.78rem;line-height:1.4}
+.feedCaption .avatar{width:27px;height:27px}
+.feedVideo{background:#050505;contain:strict}
+.feedStage{scroll-behavior:auto;touch-action:pan-y;min-height:0}
+.feedCard{contain:layout paint style}
+button{touch-action:manipulation}
+@media(max-width:520px){.feedStage{height:calc(100svh - 145px);min-height:0}.feedRightActions{right:7px;bottom:calc(76px + env(safe-area-inset-bottom));gap:8px;max-height:calc(100% - 170px)}.actionIcon{width:37px;height:37px;font-size:20px}.actionItem{min-width:48px;font-size:10px}.feedOverlay{left:12px;right:65px;bottom:calc(12px + env(safe-area-inset-bottom));max-width:calc(100% - 78px)}.feedCaption span{font-size:.74rem}.feedTabs{padding:12px 10px}.bottomNav{padding-bottom:calc(5px + env(safe-area-inset-bottom))}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Feed controls/layout refinement: keep captions separate from seek controls. */
+.feedOverlay{left:14px;right:82px;bottom:76px;max-width:calc(100% - 96px);max-height:44%;overflow:hidden;padding:0 1px 2px;}
+.creator{margin-bottom:9px;line-height:1.4;}
+.description{line-height:1.55;margin-bottom:11px;-webkit-line-clamp:3;}
+.hashtags{display:block;line-height:1.55;margin:0 0 9px;}
+.feedCaption{margin-top:9px;gap:8px;line-height:1.45;}
+.feedControls{position:absolute;left:12px;right:78px;bottom:7px;z-index:6;padding:7px 7px 5px;border-radius:10px;background:linear-gradient(180deg,#0000,#0009);text-shadow:0 1px 4px #000;}
+.feedSeek{display:block;width:100%;height:18px;margin:0 0 4px;accent-color:var(--cyan);cursor:pointer;touch-action:pan-x;}
+.feedControlRow{display:flex;align-items:center;gap:10px;min-height:27px;}
+.feedControlBtn{display:grid;place-items:center;min-width:28px;height:28px;padding:0 4px;border:0;border-radius:6px;background:#151515b8;color:#fff;font-size:17px;line-height:1;}
+.feedTime{font-variant-numeric:tabular-nums;font-size:.73rem;line-height:1.3;color:#fff;white-space:nowrap;}
+.feedControlSpacer{flex:1;min-width:4px;}
+.feedControlBtn[aria-pressed="true"]{color:var(--cyan);}
+.feedRightActions{right:8px;bottom:12px;gap:10px;max-height:calc(100% - 145px);overflow-y:auto;overflow-x:hidden;padding:4px 2px;scrollbar-width:none;}
+.feedRightActions::-webkit-scrollbar{display:none;}
+.actionItem{min-width:50px;gap:4px;line-height:1.2;font-size:11px;}
+.actionIcon{width:39px;height:39px;font-size:20px;}
+.feedStage{touch-action:auto;}
+@media(max-width:520px){
+ .feedOverlay{left:12px;right:68px;bottom:76px;max-width:calc(100% - 82px);max-height:42%;}
+ .feedControls{left:8px;right:70px;bottom:5px;padding:6px 5px 4px;}
+ .feedSeek{height:18px;margin-bottom:2px;}
+ .feedControlRow{gap:7px;min-height:26px;}
+ .feedControlBtn{min-width:26px;height:26px;font-size:16px;}
+ .feedTime{font-size:.69rem;}
+ .feedRightActions{right:5px;bottom:8px;gap:8px;max-height:calc(100% - 145px);}
+ .actionIcon{width:36px;height:36px;font-size:19px;}
+ .actionItem{min-width:44px;font-size:10px;}
+}
+
+</style>
+</head>
+<body>
+<section class="authGate" id="authGate" aria-label="Login Blink Ultimate">
+ <div class="authCard">
+  <div class="authBrand"><span class="brandMark">ϟ</span><span>Blink</span></div>
+  <p class="authTagline">Video kamu. Privasi kamu.</p>
+  <form id="authLoginForm" autocomplete="on">
+   <h1 class="authTitle">Masuk ke Blink</h1>
+   <p class="authSub">Masukkan nama pengguna dan password akunmu.</p>
+   <div class="authField"><label for="authLoginUser">Nama pengguna</label><input id="authLoginUser" name="username" autocomplete="username" minlength="3" maxlength="32" required placeholder="Nama pengguna"></div>
+   <div class="authField"><label for="authLoginPass">Password</label><input id="authLoginPass" name="password" type="password" autocomplete="current-password" required placeholder="Password"></div>
+   <button class="primaryBtn authSubmit" type="submit" id="authLoginSubmit">Masuk</button>
+   <button class="authSwitch" type="button" id="showSignup">Belum punya akun? Daftar di sini</button>
+  </form>
+  <form id="authSignupForm" class="authHidden" autocomplete="on">
+   <h1 class="authTitle">Buat akun baru</h1>
+   <p class="authSub">Cukup nama pengguna dan password. Tidak perlu Gmail.</p>
+   <div class="authField"><label for="authSignupUser">Nama pengguna</label><input id="authSignupUser" name="new-username" autocomplete="username" minlength="3" maxlength="32" required placeholder="3–32 karakter"></div>
+   <div class="authField"><label for="authSignupPass">Buat password</label><input id="authSignupPass" name="new-password" type="password" autocomplete="new-password" minlength="8" required placeholder="Minimal 8 karakter"></div>
+   <div class="authField"><label for="authSignupConfirm">Ulangi password</label><input id="authSignupConfirm" name="confirm-password" type="password" autocomplete="new-password" minlength="8" required placeholder="Ketik ulang password"></div>
+   <button class="primaryBtn authSubmit" type="submit" id="authSignupSubmit">Daftar</button>
+   <button class="authSwitch" type="button" id="showLogin">Sudah punya akun? Masuk</button>
+  </form>
+  <p class="authError" id="authError" role="alert" aria-live="polite"></p>
+  <p class="authSecurity">Versi ini memakai akun lokal pada browser/perangkat ini. Untuk privasi yang benar-benar aman saat website dipublikasikan, autentikasi dan penyimpanan video harus dipindahkan ke server.</p>
+ </div>
+</section>
+
+<header class="topbar">
+ <div class="brand"><span class="brandMark">ϟ</span><span>Blink</span></div>
+ <div class="topActions"><button class="searchBtn" id="searchOpen" aria-label="Cari">⌕ &nbsp;Cari video</button><button class="iconBtn" id="profileQuick" aria-label="Profil">♙</button></div>
+</header>
+<div class="app">
+<section id="page-home" class="page active">
+ <div class="homeLayout">
+  <div class="feedColumn">
+   <div class="feedTabs"><button class="feedTab" data-feed="following">Teman</button><button class="feedTab active" data-feed="suggested">Saran</button></div>
+   <div id="feedStage" class="feedStage">
+    <div class="feedPlaceholder" id="feedEmpty"><div class="placeholderGlyph">▷</div><strong>Belum ada video di feed</strong><p>Tambahkan video untuk melihat pratinjau di Blink. Video lokal di perangkat ini tidak otomatis dipublikasikan.</p><button class="primaryBtn" id="emptyUpload">＋ Pilih video</button></div>
+   </div>
+  </div>
+  <aside class="desktopSide">
+   <div class="sideCard"><h3>Untuk kamu</h3><div class="suggestion"><div class="avatar">B</div><div class="suggestionText"><b>Blink Official</b><span>Awal perjalanan Blink</span></div><button class="followBtn" data-local-follow>Ikuti</button></div><div class="suggestion"><div class="avatar">V</div><div class="suggestionText"><b>Video Kreator</b><span>Temukan inspirasi</span></div><button class="followBtn" data-local-follow>Ikuti</button></div><p class="sideMuted">Rekomendasi ini adalah contoh tampilan; belum berasal dari server.</p></div>
+   <div class="sideCard"><h3>Tagar populer</h3><div class="tagCloud"><span class="tag">#fyp</span><span class="tag">#gaming</span><span class="tag">#minecraft</span><span class="tag">#video</span><span class="tag">#blink</span></div></div>
+   <div class="sideCard"><h3>Informasi Blink</h3><p class="sideMuted">Video lama di browser tidak otomatis berpindah ke cloud. Jangan hapus data browser sebelum mencadangkan video lokal.</p><button class="outlineBtn" id="openAccountSide">Akun & keamanan</button></div>
+  </aside>
+ </div>
+</section>
+<section id="page-explore" class="page">
+ <div class="pageHeader"><div><h1>Jelajahi</h1><p>Temukan video dari koleksi perangkat ini.</p></div><input id="exploreSearch" class="searchInput" type="search" placeholder="Cari nama video…" aria-label="Cari video"></div>
+ <div class="contentWrap"><div class="videoGrid" id="exploreGrid"><div class="emptyGrid">Belum ada video yang tersimpan di browser ini.</div></div></div>
+</section>
+<section id="page-inbox" class="page">
+ <div class="pageHeader"><div><h1>Kotak Masuk</h1><p>Aktivitas dan pesan Blink.</p></div><button class="iconBtn" id="inboxSearch" aria-label="Cari pesan">⌕</button></div>
+ <div class="contentWrap"><div class="inboxStories"><div class="story"><div class="storyRing"><div class="storyInner">＋</div></div>Buat</div><div class="story"><div class="storyRing"><div class="storyInner">B</div></div>Blink</div><div class="story"><div class="storyRing"><div class="storyInner">♡</div></div>Aktivitas</div></div>
+  <div class="noticeRow"><div class="noticeIcon" style="background:#102e31;color:var(--cyan)">♙</div><div class="noticeText"><b>Aktivitas pengikut</b><p>Notifikasi pengikut dan aktivitas akun akan muncul di sini setelah backend tersedia.</p></div><span class="unread"></span></div>
+  <div class="noticeRow"><div class="noticeIcon" style="background:#35151e;color:var(--pink)">♥</div><div class="noticeText"><b>Suka dan komentar</b><p>Interaksi nyata belum disinkronkan ke server.</p></div></div>
+  <div class="noticeRow"><div class="noticeIcon">✉</div><div class="noticeText"><b>Pesan</b><p>Fitur pesan memerlukan akun dan backend yang terhubung.</p></div></div>
+  <div class="accountHint">Kotak masuk ini masih berupa UI tahap awal. Tidak ada notifikasi palsu yang diklaim berasal dari pengguna lain.</div>
+ </div>
+</section>
+<section id="page-profile" class="page">
+ <div class="pageHeader"><div><h1>Profil</h1><p>Video lokal dan informasi akun.</p></div><button class="iconBtn" id="profileSettings" aria-label="Pengaturan">☰</button></div>
+ <div class="contentWrap">
+  <div class="profileTop"><div class="profileAvatar" id="profileAvatar">B</div><div><div class="profileName" id="profileName">BlinkUser</div><div class="profileHandle" id="profileHandle">@blinkuser</div><div class="stats"><div><b id="localFollowing">0</b><span>Mengikuti</span></div><div><b>—</b><span>Pengikut</span></div><div><b>—</b><span>Suka</span></div></div><div class="profileActions"><button class="secondaryBtn" id="editProfile">Edit profil</button><button class="outlineBtn" id="accountFromProfile">Akun & keamanan</button><button class="outlineBtn" id="profileLogout">Keluar</button></div></div></div>
+  <p id="profileBio" class="bio">Simpan dan bagikan momen favoritmu di Blink.</p>
+  <div class="profileTabs"><button class="profileTab active" data-profile-tab="videos">▦ Video</button><button class="profileTab" data-profile-tab="saved">▣ Disimpan</button><button class="profileTab" data-profile-tab="drafts">▤ Draft</button></div>
+  <div id="profileGrid" class="videoGrid"><div class="emptyGrid">Belum ada video lokal.</div></div>
+  <p class="tiny" style="margin-top:14px">Catatan: jumlah pengikut dan suka server belum aktif. Video di sini hanya tersimpan pada browser ini, kecuali setelah cloud Blink benar-benar dikonfigurasi.</p>
+ </div>
+</section>
+<section id="page-upload" class="page">
+ <div class="pageHeader"><div><h1>Tambah video</h1><p>Pilih satu atau beberapa video langsung dari galeri HP.</p></div><button class="outlineBtn" id="cameraInfo">Kamera</button></div>
+ <div class="uploadPanel">
+  <div class="uploadPicker" id="dropZone"><div class="bigPlus">＋</div><strong>Pilih video dari perangkat</strong><p>Pilih banyak video sekaligus, lalu tekan Post ke Blink untuk memasukkannya ke feed.</p><button class="primaryBtn" id="selectVideos">Pilih dari Galeri / File</button><input id="filePicker" type="file" multiple><input id="cameraPicker" type="file" accept="video/*" capture="environment" hidden></div>
+  <div id="uploadList" class="uploadList"></div>
+  <div class="row" style="justify-content:space-between;margin-top:15px"><span id="queueSummary" class="tiny">Belum ada file dipilih.</span><button id="clearQueue" class="outlineBtn">Kosongkan antrean</button></div>
+  <div class="uploadNotice"><b>Transparansi:</b> pemilihan banyak file tersedia di antarmuka. Upload cloud, dukungan permanen untuk file &gt;2 GB, dan unggahan lintas perangkat belum aktif karena backend penyimpanan belum dikonfigurasi. Jangan tutup halaman saat hanya mengandalkan pratinjau ini.</div>
+  <hr class="hr">
+  <h3>Posting video</h3><p class="muted" style="font-size:.88rem">Tekan Post ke Blink untuk menyimpan video ke feed lokal. Karena website ini masih HTML statis, posting belum tampil ke perangkat atau akun lain. File besar dapat gagal jika kuota browser tidak cukup.</p>
+  <div class="row"><button class="secondaryBtn" id="saveLocally">Simpan file yang dipilih ke browser</button><button class="outlineBtn" id="publishAttempt">Unggah ke Blink</button></div>
+  <div id="uploadStatus" class="tiny" role="status" aria-live="polite" style="margin-top:12px"></div>
+ </div>
+</section>
+<section id="page-account" class="page">
+ <div class="pageHeader"><div><h1>Akun & keamanan</h1><p>Rancangan alur akun Blink.</p></div><button class="outlineBtn" id="accountBack">Kembali</button></div>
+ <div class="contentWrap">
+  <div class="panel"><h3>Akun yang sedang masuk</h3><p class="muted">Nama pengguna</p><strong id="accountCurrentUsername">—</strong><div style="margin-top:16px"><button class="outlineBtn" id="logoutAccount">Keluar dari Blink</button></div></div>
+  <div class="accountHint"><b>Catatan keamanan:</b> akun dan daftar video pada file HTML ini masih lokal di browser. Jangan mengandalkan ini untuk menyimpan video rahasia; orang yang dapat mengubah halaman atau membaca penyimpanan browser bisa melewati login. Keamanan server sungguhan membutuhkan backend.</div>
+  <div class="panel" style="margin-top:16px"><h3>Video lokal di perangkat ini</h3><p class="muted">Video disimpan di IndexedDB pada browser ini, bukan cloud. File sangat besar mungkin gagal disimpan karena kuota browser.</p><div class="row"><span id="accountLocalCount" class="tiny">Memeriksa koleksi lokal…</span><button class="outlineBtn" id="refreshLocal">Muat ulang daftar</button></div></div>
+ </div>
+</section>
+<section id="page-store" class="page"><div class="pageHeader"><div><h1>Koleksi & Impor</h1><p>Koleksi video lokal dan rancangan impor tautan.</p></div></div><div class="contentWrap"><div class="panel"><h3>Koleksi video</h3><p class="muted">Kelola video lokal yang tersimpan di browser ini.</p><button class="primaryBtn" id="goProfileVideos">Lihat koleksi</button></div><div class="panel" style="margin-top:14px"><h3>Impor video dari TeraBox</h3><p class="muted">Tempel tautan video atau folder. Tahap ini hanya memeriksa format tautan, belum membaca folder atau mengunduh file.</p><div class="field"><label for="teraboxUrl">Tautan TeraBox</label><input id="teraboxUrl" type="url" placeholder="https://terabox.com/..." autocomplete="url"></div><div class="row"><button class="primaryBtn" id="inspectTerabox">Periksa tautan</button><button class="outlineBtn" id="clearTerabox">Bersihkan</button></div><div id="teraboxStatus" class="accountHint" role="status" aria-live="polite">Konektor impor server belum dikonfigurasi. Jangan menganggap video sudah diimpor sampai proses cloud benar-benar berhasil.</div></div><div class="accountHint">Fitur toko/monetisasi belum menjadi bagian backend tahap pertama.</div></div></section>
+</div>
+<nav class="bottomNav" aria-label="Navigasi utama"><button class="navItem active" data-page="home"><span class="navIcon">⌂</span><span>Beranda</span></button><button class="navItem" data-page="store"><span class="navIcon">▣</span><span>Koleksi</span></button><button class="navItem" data-page="upload" aria-label="Tambah video"><span class="createNav">＋</span><span>Upload</span></button><button class="navItem" data-page="inbox"><span class="navIcon">▱</span><span>Kotak Masuk</span></button><button class="navItem" data-page="profile"><span class="navIcon">♙</span><span>Profil</span></button></nav>
+<div class="sourceSheetBackdrop" id="sourceSheetBackdrop" role="dialog" aria-modal="true" aria-label="Pilih sumber video"><div class="sourceSheet"><div class="sourceHandle"></div><div style="font-size:1.05rem;font-weight:850;margin-bottom:16px">Tambahkan video</div><div class="sourceChoices"><button class="sourceChoice" id="chooseCamera"><span class="sourceIcon">📷</span><span>Kamera</span><small style="color:#aaa;font-weight:500">Rekam video</small></button><button class="sourceChoice" id="chooseFile"><span class="sourceIcon">📁</span><span>File</span><small style="color:#aaa;font-weight:500">Pilih video</small></button></div><button class="outlineBtn" id="closeSourceSheet" style="width:100%;margin-top:16px">Batal</button></div></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<div id="animationModal" class="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="animationTitle"><div class="modalCard"><div class="modalTop"><h2 id="animationTitle">Selamat datang di Blink</h2><button class="xBtn" id="closeAnimation" aria-label="Tutup">×</button></div><div class="logoAnimation">ϟ<span>Blink</span></div><p class="muted" style="text-align:center">Pratinjau animasi logo. Login dan registrasi belum terhubung ke server.</p><button class="primaryBtn" id="animationDone" style="width:100%;margin-top:10px">Mengerti</button></div></div>
+<script>
+'use strict';
+// Compatibility: keep the exact IndexedDB name/store used by the previous Blink starter.
+// Do not delete/upgrade the database automatically; existing records remain untouched.
+const DB_NAME='BlinkLocal_v1', STORE='videos';
+const $=id=>document.getElementById(id);let allRecords=[],queue=[],objectUrls=new Map(),activeProfileTab='videos',feedMode='suggested',feedObserver=null,activeFeedVideo=null,feedRatios=new Map();
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._timer);toast._timer=setTimeout(()=>t.classList.remove('show'),3200)}
+function openDb(){return new Promise((resolve,reject)=>{const r=indexedDB.open(DB_NAME);r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE,{keyPath:'id'});};})}
+async function getAll(){try{const db=await openDb();const records=await new Promise((resolve,reject)=>{const req=db.transaction(STORE,'readonly').objectStore(STORE).getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error)});if(!currentUser)return [];const owned=[];for(const r of records){if(!r.owner){r.owner=currentUser;try{await putRecord(r)}catch{}}if(r.owner===currentUser)owned.push(r)}return owned.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));}catch(e){console.warn('IndexedDB unavailable',e);return []}}
+async function putRecord(record){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).put(record);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('Transaksi dibatalkan'))})}
+async function deleteVideoRecord(id){const db=await openDb();return new Promise((resolve,reject)=>{const tx=db.transaction(STORE,'readwrite');tx.objectStore(STORE).delete(id);tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);tx.onabort=()=>reject(tx.error||new Error('Penghapusan dibatalkan'))})}
+function fmtSize(size){if(size>=1073741824)return (size/1073741824).toFixed(2)+' GB';if(size>=1048576)return (size/1048576).toFixed(1)+' MB';return (size/1024).toFixed(0)+' KB'}
+function revokeUrls(){for(const u of objectUrls.values())URL.revokeObjectURL(u);objectUrls.clear()}
+function getUrl(v){if(!objectUrls.has(v.id))objectUrls.set(v.id,URL.createObjectURL(v.blob));return objectUrls.get(v.id)}
+function safeText(s){return String(s||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]))}
+function setPage(name){if(name!=='home')stopFeedPlayback();document.querySelectorAll('.page').forEach(p=>p.classList.toggle('active',p.id==='page-'+name));document.querySelectorAll('.navItem').forEach(b=>b.classList.toggle('active',b.dataset.page===name));if(name==='profile'||name==='explore')renderGrids();if(name==='home')renderFeed();window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('.navItem').forEach(b=>b.addEventListener('click',()=>setPage(b.dataset.page)));
+$('profileQuick').onclick=()=>setPage('profile');$('profileSettings').onclick=()=>setPage('account');$('accountFromProfile').onclick=()=>setPage('account');$('openAccountSide').onclick=()=>setPage('account');$('accountBack').onclick=()=>setPage('profile');$('accountBack').onclick=()=>setPage('profile');$('goProfileVideos').onclick=()=>setPage('profile');
+$('inspectTerabox').onclick=()=>{const val=$('teraboxUrl').value.trim(),out=$('teraboxStatus');if(!val){out.textContent='Masukkan tautan TeraBox terlebih dahulu.';return}let u;try{u=new URL(val)}catch{out.textContent='URL tidak valid. Masukkan tautan lengkap dengan https://';return}if(!/(^|\.)terabox\.com$|(^|\.)1024terabox\.com$|(^|\.)teraboxapp\.com$/i.test(u.hostname)){out.textContent='Domain tersebut tidak dikenali sebagai tautan TeraBox. Periksa kembali.';return}out.textContent='Format tautan terlihat valid, tetapi konektor TeraBox belum tersedia. Belum ada folder yang dibaca atau video yang diunduh.'};
+$('clearTerabox').onclick=()=>{$('teraboxUrl').value='';$('teraboxStatus').textContent='Konektor impor server belum dikonfigurasi. Tempel tautan untuk memeriksa format.'};$('searchOpen').onclick=()=>{setPage('explore');$('exploreSearch').focus()};$('inboxSearch').onclick=()=>toast('Pencarian pesan memerlukan backend.');$('emptyUpload').onclick=()=>setPage('upload');
+// Use Android/browser's native file chooser directly; do not show a custom in-page source sheet.
+// Omitting accept lets Android offer installed file-provider apps; selected items are filtered to videos below.
+$('selectVideos').onclick=()=> $('filePicker').click();
+$('cameraInfo').onclick=()=> $('cameraPicker').click();
+function handlePickedFiles(input){const files=Array.from(input.files||[]);if(files.length){queue.push(...files.filter(f=>f.type.startsWith('video/')||/\.(mp4|mov|m4v|webm|mkv|avi|3gp)$/i.test(f.name)));renderQueue();$('uploadStatus').textContent=`${files.length} file dipilih. Periksa antrean lalu tekan Simpan file yang dipilih ke browser.`;}input.value=''}
+$('filePicker').addEventListener('change',function(){handlePickedFiles(this)});$('cameraPicker').addEventListener('change',function(){handlePickedFiles(this)});
+async function downloadVideo(record){
+ if(!record || !record.blob){toast('File video tidak ditemukan.');return}
+ try{
+  const url=URL.createObjectURL(record.blob);
+  const a=document.createElement('a');a.href=url;
+  let filename=String(record.name||'blink-video.mp4').replace(/[\\/:*?"<>|]+/g,'_').trim();
+  if(!/\.[a-z0-9]{2,5}$/i.test(filename)){const ext=(record.type||'').split('/')[1];filename+='.'+((ext&&/^[a-z0-9]+$/i.test(ext))?ext:'mp4')}
+  a.download=filename;a.style.display='none';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);toast('Unduhan dimulai: '+filename);
+ }catch(err){console.error(err);toast('Gagal mengunduh video. Coba buka video lalu gunakan menu browser.')}
+}
+function makeAction(icon,label,count,cls=''){const b=document.createElement('button');b.className='actionItem '+cls;b.innerHTML=`<span class="actionIcon">${icon}</span><span>${label?label:''}</span>`;b.setAttribute('aria-label',label);return b}
+function formatVideoTime(seconds){if(!Number.isFinite(seconds)||seconds<0)return '00:00';const n=Math.floor(seconds);return String(Math.floor(n/60)).padStart(2,'0')+':'+String(n%60).padStart(2,'0')}
+function stopFeedPlayback(){
+ if(feedObserver){feedObserver.disconnect();feedObserver=null;}
+ feedRatios.clear();
+ const stage=$('feedStage');if(stage)stage.querySelectorAll('video.feedVideo').forEach(v=>v.pause());
+ activeFeedVideo=null;
+}
+function activateFeedVideo(card){
+ const video=card?.querySelector('video.feedVideo');if(!video||activeFeedVideo===video)return;
+ if(activeFeedVideo)activeFeedVideo.pause();
+ document.querySelectorAll('#feedStage video.feedVideo').forEach(v=>{if(v!==video)v.pause()});
+ activeFeedVideo=video;
+ // Mobile browsers reliably allow muted autoplay; viewers can turn sound on using the speaker button.
+ video.muted=true;
+ if(video.readyState<2)video.load();
+ const playPromise=video.play();if(playPromise&&typeof playPromise.catch==='function')playPromise.catch(()=>{});
+ const playButton=card.querySelector('[data-player-play]');if(playButton){playButton.textContent='Ⅱ';playButton.setAttribute('aria-label','Jeda video')}
+}
+function observeFeedCards(stage){
+ if(feedObserver)feedObserver.disconnect();feedRatios.clear();activeFeedVideo=null;
+ if(!('IntersectionObserver' in window)){
+  const first=stage.querySelector('.feedCard');if(first)activateFeedVideo(first);return;
+ }
+ feedObserver=new IntersectionObserver(entries=>{
+  for(const entry of entries)feedRatios.set(entry.target,entry.isIntersecting?entry.intersectionRatio:0);
+  let best=null,bestRatio=0;
+  for(const [card,ratio] of feedRatios){if(ratio>bestRatio){best=card;bestRatio=ratio}}
+  if(activeFeedVideo){
+   const activeCard=activeFeedVideo.closest('.feedCard');
+   const activeRatio=activeCard? (feedRatios.get(activeCard)||0):0;
+   if(activeRatio<0.55 && best!==activeCard){activeFeedVideo.pause();activeFeedVideo=null;}
+  }
+  if(best&&bestRatio>=0.55)activateFeedVideo(best);
+ },{root:stage,threshold:[0,0.15,0.3,0.45,0.55,0.7,0.85,0.98]});
+ stage.querySelectorAll('.feedCard').forEach(card=>{feedRatios.set(card,0);feedObserver.observe(card)});
+}
+function renderFeed(){
+ const stage=$('feedStage');
+ stopFeedPlayback();stage.innerHTML='';
+ if(!allRecords.length){const emp=document.createElement('div');emp.className='feedPlaceholder';emp.innerHTML='<div class="placeholderGlyph">＋</div><strong>Belum ada video di Blink</strong><p>Unggah video, lalu tekan Post ke Blink untuk menambahkannya ke feed.</p><button class="primaryBtn" id="feedUploadBtn">Tambah video</button>';stage.append(emp);$('feedUploadBtn').onclick=()=>setPage('upload');return;}
+ allRecords.forEach((active,index)=>{
+  const card=document.createElement('article');card.className='feedCard';card.dataset.videoId=active.id;
+  const video=document.createElement('video');video.className='feedVideo';video.src=getUrl(active);video.controls=false;video.playsInline=true;video.setAttribute('playsinline','');video.muted=true;video.loop=true;video.preload=index===0?'metadata':'none';video.disablePictureInPicture=true;video.setAttribute('aria-label','Video '+(active.name||''));card.append(video);
+  const overlay=document.createElement('div');overlay.className='feedOverlay';const owner=active.owner||currentUser;const users=readUsers();const display=(users[owner]?.displayName||owner||'BlinkUser');overlay.innerHTML=`<div class="creator">@${safeText(display)} <span style="color:var(--cyan)">✓</span> <span class="muted" style="font-size:.77rem;font-weight:500">· Lokal</span></div><p class="description">${safeText(active.caption||active.name||'Video Blink')}</p><div class="hashtags">#Blink #Video</div><div class="feedCaption"><div class="avatar">${safeText(display.slice(0,1).toUpperCase())}</div><span>Audio asli · tersimpan di perangkat ini</span></div>`;card.append(overlay);
+  const controls=document.createElement('div');controls.className='feedControls';
+  const seek=document.createElement('input');seek.type='range';seek.className='feedSeek';seek.min='0';seek.max='1000';seek.step='1';seek.value='0';seek.setAttribute('aria-label','Geser untuk melompat ke durasi video');
+  const row=document.createElement('div');row.className='feedControlRow';
+  const play=document.createElement('button');play.type='button';play.className='feedControlBtn';play.dataset.playerPlay='1';play.textContent='Ⅱ';play.setAttribute('aria-label','Jeda video');
+  const time=document.createElement('span');time.className='feedTime';time.textContent='00:00 / 00:00';
+  const spacer=document.createElement('span');spacer.className='feedControlSpacer';
+  const sound=document.createElement('button');sound.type='button';sound.className='feedControlBtn';sound.textContent='🔇';sound.setAttribute('aria-label','Aktifkan suara');sound.setAttribute('aria-pressed','false');
+  const fullscreen=document.createElement('button');fullscreen.type='button';fullscreen.className='feedControlBtn';fullscreen.textContent='⛶';fullscreen.setAttribute('aria-label','Layar penuh');
+  const syncControls=()=>{const duration=Number.isFinite(video.duration)?video.duration:0;if(!seek.matches(':active'))seek.value=duration>0?String(Math.round(video.currentTime/duration*1000)):'0';time.textContent=`${formatVideoTime(video.currentTime)} / ${formatVideoTime(duration)}`;if(play){play.textContent=video.paused?'▶':'Ⅱ';play.setAttribute('aria-label',video.paused?'Putar video':'Jeda video')}};
+  video.addEventListener('loadedmetadata',syncControls);video.addEventListener('timeupdate',syncControls);video.addEventListener('durationchange',syncControls);video.addEventListener('play',syncControls);video.addEventListener('pause',syncControls);video.addEventListener('ended',()=>{video.currentTime=0;if(activeFeedVideo===video)video.play().catch(()=>{})});
+  seek.addEventListener('input',()=>{const duration=video.duration;if(Number.isFinite(duration)&&duration>0){video.currentTime=(Number(seek.value)/1000)*duration;syncControls()}});
+  play.onclick=()=>{if(video.paused){if(activeFeedVideo!==video)activateFeedVideo(card);else video.play().catch(()=>{});}else video.pause();};
+  sound.onclick=()=>{video.muted=!video.muted;sound.textContent=video.muted?'🔇':'🔊';sound.setAttribute('aria-label',video.muted?'Aktifkan suara':'Matikan suara');sound.setAttribute('aria-pressed',String(!video.muted));if(video.paused&&activeFeedVideo===video)video.play().catch(()=>{});};
+  fullscreen.onclick=async()=>{try{if(document.fullscreenElement){await document.exitFullscreen()}else if(card.requestFullscreen){await card.requestFullscreen()}else if(video.webkitEnterFullscreen){video.webkitEnterFullscreen()}}catch{toast('Mode layar penuh tidak didukung browser ini.')}};
+  video.addEventListener('click',()=>{if(video.paused){if(activeFeedVideo!==video)activateFeedVideo(card);else video.play().catch(()=>{})}else video.pause()});
+  row.append(play,time,spacer,sound,fullscreen);controls.append(seek,row);card.append(controls);
+  const actions=document.createElement('div');actions.className='feedRightActions';
+  const avatar=document.createElement('div');avatar.className='avatar';avatar.textContent=(display||'B').slice(0,1).toUpperCase();actions.append(avatar);
+  const like=makeAction('♡','Suka','');like.onclick=()=>{like.classList.toggle('liked');like.querySelector('.actionIcon').textContent=like.classList.contains('liked')?'♥':'♡';toast('Suka ini hanya tampilan lokal.');};actions.append(like);
+  const comment=makeAction('☰','Komentar','');comment.onclick=()=>toast('Komentar antar pengguna memerlukan backend.');actions.append(comment);
+  const remove=makeAction('⌫','Hapus','');remove.classList.add('actionDelete');remove.onclick=async()=>{if(!confirm(`Hapus “${active.name}” dari koleksi Blink? File asli di galeri HP tidak ikut terhapus.`))return;try{await deleteVideoRecord(active.id);if(objectUrls.has(active.id)){URL.revokeObjectURL(objectUrls.get(active.id));objectUrls.delete(active.id)}await refresh();toast('Video dihapus dari Blink lokal.');}catch(e){console.error(e);toast('Video gagal dihapus.')}};actions.append(remove);
+  const download=makeAction('↓','Unduh','');download.classList.add('actionDownload');download.onclick=()=>downloadVideo(active);actions.append(download);
+  const share=makeAction('➦','Bagikan','');share.onclick=async()=>{try{if(navigator.share)await navigator.share({title:'Blink video',text:active.name||'Video Blink'});else{await navigator.clipboard.writeText(active.name||'Video Blink');toast('Nama video disalin.')}}catch{}};actions.append(share);
+  card.append(actions);stage.append(card);
+ });
+ observeFeedCards(stage);
+}
+function renderGrids(){const root=$('profileGrid'),explore=$('exploreGrid');const query=($('exploreSearch').value||'').trim().toLowerCase();const list=allRecords.filter(v=>(v.name||'').toLowerCase().includes(query));for(const el of [root,explore])el.innerHTML='';if(!allRecords.length){root.innerHTML='<div class="emptyGrid">Belum ada video lokal. Buka Upload untuk memilih video.</div>';explore.innerHTML='<div class="emptyGrid">Belum ada video yang tersimpan di browser ini.</div>';return}for(const v of allRecords){const tile=document.createElement('div');tile.className='gridVideo';const vid=document.createElement('video');vid.src=getUrl(v);vid.preload='none';vid.muted=true;vid.playsInline=true;vid.loading='lazy';vid.addEventListener('mouseenter',()=>vid.play().catch(()=>{}));vid.addEventListener('mouseleave',()=>{vid.pause();vid.currentTime=0});tile.append(vid);const lab=document.createElement('span');lab.className='gridLabel';lab.textContent='▷ '+(v.name||'Video');tile.append(lab);tile.onclick=()=>{setPage('home');toast('Video lokal dipilih untuk pratinjau feed.');};root.append(tile);if((v.name||'').toLowerCase().includes(query)){const etile=tile.cloneNode(true);const ev=etile.querySelector('video');ev.src=getUrl(v);etile.onclick=()=>{setPage('home');toast('Video lokal dipilih untuk pratinjau feed.');};explore.append(etile)}}if(!explore.children.length)explore.innerHTML='<div class="emptyGrid">Tidak ada video yang cocok dengan pencarian.</div>'}
+async function refresh(){allRecords=await getAll();$('accountLocalCount').textContent=allRecords.length+' video lokal ditemukan; tidak ada yang dihapus oleh pembaruan ini.';$('localFollowing').textContent='0';renderFeed();renderGrids()}
+// Feed tabs are visual states; this local starter has no remote social graph yet.
+document.querySelectorAll('.feedTab').forEach(b=>b.addEventListener('click',()=>{feedMode=b.dataset.feed;document.querySelectorAll('.feedTab').forEach(x=>x.classList.toggle('active',x===b));toast(feedMode==='following'?'Feed Teman memerlukan akun dan backend.':'Menampilkan koleksi lokal yang tersedia.')}));
+document.querySelectorAll('[data-profile-tab]').forEach(b=>b.addEventListener('click',()=>{activeProfileTab=b.dataset.profileTab;document.querySelectorAll('[data-profile-tab]').forEach(x=>x.classList.toggle('active',x===b));if(activeProfileTab==='drafts')toast('Draft lintas sesi belum disinkronkan ke cloud.');else if(activeProfileTab==='saved')toast('Video tersimpan dari server akan tersedia setelah backend aktif.');}));
+$('exploreSearch').addEventListener('input',renderGrids);
+function renderQueue(){const root=$('uploadList');root.innerHTML='';let total=0;queue.forEach((f,i)=>{total+=f.size;const row=document.createElement('div');row.className='uploadRow';const glyph=document.createElement('div');glyph.className='fileGlyph';glyph.textContent='▶';const detail=document.createElement('div');detail.className='fileDetail';detail.innerHTML=`<strong>${safeText(f.name)}</strong><span>${fmtSize(f.size)} · ${safeText(f.type||'tipe tidak diketahui')}</span><div class="progressTrack"><div class="progressBar" style="width:0%"></div></div>`;const rm=document.createElement('button');rm.className='removeFile';rm.textContent='×';rm.setAttribute('aria-label','Hapus dari antrean');rm.onclick=()=>{queue.splice(i,1);renderQueue()};row.append(glyph,detail,rm);root.append(row)});$('queueSummary').textContent=queue.length?`${queue.length} video · total ${fmtSize(total)} · dipilih, belum disimpan`:'Belum ada file dipilih.'}
+$('clearQueue').onclick=()=>{queue=[];renderQueue();$('uploadStatus').textContent='Antrean dikosongkan. Video yang sudah tersimpan tidak diubah.'};
+$('saveLocally').onclick=async()=>{if(!queue.length){toast('Pilih video terlebih dahulu.');return}if(!confirm(`Simpan ${queue.length} file ke penyimpanan browser lokal? Ini bukan cloud dan bisa gagal karena batas kapasitas. Video lama tidak akan dihapus.`))return;const b=$('saveLocally');b.disabled=true;let saved=0;try{for(let i=0;i<queue.length;i++){const f=queue[i];$('uploadStatus').textContent=`Menyimpan lokal ${i+1}/${queue.length}: ${f.name}`;await putRecord({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+i,name:f.name,type:f.type,size:f.size,createdAt:Date.now(),owner:currentUser,blob:f});saved++}queue=[];renderQueue();await refresh();$('uploadStatus').textContent=`Berhasil menyimpan ${saved} video ke IndexedDB pada browser ini. Belum masuk cloud.`;toast(`${saved} video disimpan lokal.`)}catch(e){console.error(e);$('uploadStatus').textContent=`Penyimpanan terhenti setelah ${saved} file. Kuota browser mungkin tidak cukup; file lama tidak sengaja dihapus.`;toast('Penyimpanan lokal gagal atau kuota browser habis.')}finally{b.disabled=false}};
+$('publishAttempt').onclick=async()=>{
+ if(!queue.length){toast('Pilih video dulu sebelum Post.');$('uploadStatus').textContent='Belum ada video di antrean.';return;}
+ if(!currentUser){toast('Login dahulu untuk mem-posting video.');return;}
+ if(!confirm(`Post ${queue.length} video ke feed Blink pada browser ini? Ini menyimpan video lokal, bukan mengunggahnya ke cloud.`))return;
+ const b=$('publishAttempt');b.disabled=true;const original=b.textContent;b.textContent='Mem-posting…';let posted=0;
+ try{
+  for(let i=0;i<queue.length;i++){
+   const f=queue[i];$('uploadStatus').textContent=`Mem-posting ${i+1}/${queue.length}: ${f.name}`;
+   await putRecord({id:crypto.randomUUID?crypto.randomUUID():String(Date.now())+'-'+Math.random().toString(36).slice(2),name:f.name,type:f.type,size:f.size,createdAt:Date.now()+i,owner:currentUser,caption:f.name,blob:f});posted++;
+  }
+  queue=[];renderQueue();await refresh();$('uploadStatus').textContent=`Berhasil mem-posting ${posted} video ke feed Blink lokal. Video hanya tersedia pada browser/perangkat ini; belum ada cloud.`;toast(`${posted} video masuk ke feed Blink.`);setPage('home');const stage=$('feedStage');if(stage)stage.scrollTop=0;
+ }catch(e){console.error(e);$('uploadStatus').textContent=`Posting berhenti setelah ${posted} video. Periksa ruang penyimpanan browser. Video yang sudah tersimpan tidak dihapus.`;toast('Posting gagal atau ruang browser tidak cukup.');}
+ finally{b.disabled=false;b.textContent=original;}
+};
+$('publishAttempt').textContent='Post ke Blink';
+$('saveLocally').textContent='Simpan sebagai lokal';
+
+$('dropZone').addEventListener('dragover',e=>{e.preventDefault();$('dropZone').style.borderColor='var(--cyan)'});$('dropZone').addEventListener('dragleave',()=>$('dropZone').style.borderColor='#5b5b5b');$('dropZone').addEventListener('drop',e=>{e.preventDefault();$('dropZone').style.borderColor='#5b5b5b';const files=[...e.dataTransfer.files].filter(f=>f.type.startsWith('video/'));queue.push(...files);renderQueue()});
+function openAnimation(){ $('animationModal').classList.add('show')};$('closeAnimation').onclick=()=>$('animationModal').classList.remove('show');$('animationDone').onclick=()=>$('animationModal').classList.remove('show');$('animationModal').addEventListener('click',e=>{if(e.target===$('animationModal'))$('animationModal').classList.remove('show')});
+// Browser-local demo authentication. Passwords are salted hashes, never kept as plaintext.
+let currentUser='';
+const USERS_KEY='blink_users_v2';
+function readUsers(){try{const v=JSON.parse(localStorage.getItem(USERS_KEY)||'{}');return v&&typeof v==='object'?v:{}}catch{return {}}}
+function writeUsers(users){localStorage.setItem(USERS_KEY,JSON.stringify(users))}
+function randomSalt(){const b=new Uint8Array(16);crypto.getRandomValues(b);return Array.from(b,x=>x.toString(16).padStart(2,'0')).join('')}
+async function passwordHash(password,salt){
+ if(!window.crypto||!crypto.subtle)throw new Error('Browser tidak mendukung hashing aman. Buka Blink melalui HTTPS, misalnya GitHub Pages.');
+ const enc=new TextEncoder();const key=await crypto.subtle.importKey('raw',enc.encode(password),'PBKDF2',false,['deriveBits']);
+ const bits=await crypto.subtle.deriveBits({name:'PBKDF2',salt:enc.encode(salt),iterations:120000,hash:'SHA-256'},key,256);
+ return Array.from(new Uint8Array(bits),x=>x.toString(16).padStart(2,'0')).join('');
+}
+function showAuthError(message){$('authError').textContent=message||''}
+function setAuthMode(mode){const signUp=mode==='signup';$('authLoginForm').classList.toggle('authHidden',signUp);$('authSignupForm').classList.toggle('authHidden',!signUp);showAuthError('');}
+function normalizeUsername(value){return String(value||'').trim().toLowerCase()}
+async function enterApp(username){
+ currentUser=username;sessionStorage.setItem('blink_session_v2',username);document.body.classList.add('authenticated');
+ const users=readUsers();$('profileName').textContent=users[username]?.displayName||username;$('profileHandle').textContent='@'+username;$('profileAvatar').textContent=(users[username]?.displayName||username).slice(0,1).toUpperCase();$('accountCurrentUsername').textContent=username;
+ showAuthError('');await refresh();setPage('home');
+}
+$('showSignup').addEventListener('click',()=>setAuthMode('signup'));
+$('showLogin').addEventListener('click',()=>setAuthMode('login'));
+$('authSignupForm').addEventListener('submit',async e=>{
+ e.preventDefault();showAuthError('');const username=normalizeUsername($('authSignupUser').value);const pass=$('authSignupPass').value;const confirmPass=$('authSignupConfirm').value;
+ if(!/^[a-z0-9_.-]{3,32}$/.test(username)){showAuthError('Nama pengguna harus 3–32 karakter: huruf, angka, titik, garis bawah, atau tanda hubung.');return}
+ if(pass.length<8){showAuthError('Password minimal 8 karakter.');return}
+ if(pass!==confirmPass){showAuthError('Konfirmasi password tidak sama.');return}
+ const users=readUsers();if(users[username]){showAuthError('Nama pengguna sudah dipakai. Pilih nama lain.');return}
+ const btn=$('authSignupSubmit');btn.disabled=true;btn.textContent='Membuat akun…';
+ try{const salt=randomSalt();const hash=await passwordHash(pass,salt);users[username]={salt,hash,displayName:username,createdAt:Date.now()};writeUsers(users);$('authSignupPass').value='';$('authSignupConfirm').value='';await enterApp(username);}
+ catch(err){showAuthError(err.message||'Pendaftaran gagal. Coba lagi.')}finally{btn.disabled=false;btn.textContent='Daftar'}
+});
+$('authLoginForm').addEventListener('submit',async e=>{
+ e.preventDefault();showAuthError('');const username=normalizeUsername($('authLoginUser').value);const pass=$('authLoginPass').value;const user=readUsers()[username];
+ if(!username||!pass){showAuthError('Isi nama pengguna dan password.');return}
+ if(!user){showAuthError('Nama pengguna atau password salah.');$('authLoginPass').value='';return}
+ const btn=$('authLoginSubmit');btn.disabled=true;btn.textContent='Memeriksa…';
+ try{const hash=await passwordHash(pass,user.salt);if(hash!==user.hash){showAuthError('Nama pengguna atau password salah.');$('authLoginPass').value='';return} $('authLoginPass').value='';await enterApp(username)}
+ catch(err){showAuthError(err.message||'Login gagal. Coba lagi.')}finally{btn.disabled=false;btn.textContent='Masuk'}
+});
+function logoutBlink(){currentUser='';sessionStorage.removeItem('blink_session_v2');document.body.classList.remove('authenticated');$('authLoginPass').value='';$('authLoginUser').value='';showAuthError('');setAuthMode('login');toast('Kamu sudah keluar dari Blink.')}
+$('logoutAccount').addEventListener('click',logoutBlink);$('profileLogout').addEventListener('click',logoutBlink);
+
+$('editProfile').onclick=()=>{const n=prompt('Nama tampilan:',$('profileName').textContent||currentUser);if(n!==null&&n.trim()){const users=readUsers();if(users[currentUser])users[currentUser].displayName=n.trim();writeUsers(users);$('profileName').textContent=n.trim();$('profileAvatar').textContent=n.trim().slice(0,1).toUpperCase();toast('Nama tampilan diperbarui.')}};
+$('refreshLocal').onclick=refresh;
+$('accountFromProfile').onclick=()=>setPage('account');$('openAccountSide').onclick=()=>setPage('account');$('accountBack').onclick=()=>setPage('profile');$('profileQuick').onclick=()=>setPage('profile');$('goProfileVideos').onclick=()=>setPage('profile');
+try{const user=sessionStorage.getItem('blink_session_v2');if(user&&readUsers()[user]){currentUser=user;document.body.classList.add('authenticated');$('profileName').textContent=readUsers()[user].displayName||user;$('profileHandle').textContent='@'+user;$('profileAvatar').textContent=($('profileName').textContent||user).slice(0,1).toUpperCase();$('accountCurrentUsername').textContent=user;refresh()}else{document.body.classList.remove('authenticated');}}catch(err){console.warn('Session lokal tidak dapat dipulihkan',err);document.body.classList.remove('authenticated')}
+</script>
+</body>
+</html>
