@@ -1,0 +1,146 @@
+name: ZIP2APK Android Builder
+run-name: "ZIP2APK • ${{ inputs.job_id }}"
+
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: "32-character build ID"
+        required: true
+        type: string
+      zip_path:
+        description: "Committed ZIP under uploads/"
+        required: true
+        type: string
+      app_name:
+        description: "Android application name"
+        required: true
+        type: string
+      package_name:
+        description: "Android package ID"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  CI: true
+
+jobs:
+  build:
+    name: Build, sign, install, launch, and render APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 65
+    steps:
+      - name: Checkout builder and uploaded ZIP
+        uses: actions/checkout@v4
+
+      - name: Validate workflow inputs
+        env:
+          BUILD_JOB: ${{ inputs.job_id }}
+          INPUT_ZIP: ${{ inputs.zip_path }}
+        run: |
+          python3 - <<'PY'
+          import os,re,pathlib
+          job=os.environ['BUILD_JOB']
+          path=os.environ['INPUT_ZIP']
+          assert re.fullmatch(r'[a-f0-9]{32}',job), 'Invalid build ID'
+          assert path == 'uploads/'+job+'.zip', 'ZIP path must match build ID'
+          assert pathlib.Path(path).is_file(), 'Uploaded ZIP is missing'
+          print('Validated input file:',path)
+          PY
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK platform and build-tools
+        run: |
+          sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+
+      - name: Set up Gradle 8.10.2
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Compile and sign release APK
+        env:
+          INPUT_ZIP: ${{ inputs.zip_path }}
+          INPUT_NAME: ${{ inputs.app_name }}
+          INPUT_PACKAGE: ${{ inputs.package_name }}
+          BUILD_JOB: ${{ inputs.job_id }}
+          APK_KEYSTORE_BASE64: ${{ secrets.APK_KEYSTORE_BASE64 }}
+          APK_KEYSTORE_PASSWORD: ${{ secrets.APK_KEYSTORE_PASSWORD }}
+          APK_KEY_ALIAS: ${{ secrets.APK_KEY_ALIAS }}
+          APK_KEY_PASSWORD: ${{ secrets.APK_KEY_PASSWORD }}
+        run: |
+          python3 tools/build_apk.py --zip "$INPUT_ZIP" --name "$INPUT_NAME" --package "$INPUT_PACKAGE" --project-dir "generated-$BUILD_JOB" --output "dist/app-$BUILD_JOB.apk"
+
+      - name: Verify signature, manifest, package, and DEX
+        env:
+          BUILD_JOB: ${{ inputs.job_id }}
+          INPUT_PACKAGE: ${{ inputs.package_name }}
+        run: |
+          set -euo pipefail
+          apk="dist/app-$BUILD_JOB.apk"
+          test -s "$apk"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$apk"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$apk" | tee dist/apk-badging.txt
+          grep -F "package: name='$INPUT_PACKAGE'" dist/apk-badging.txt
+          python3 - "$apk" <<'PY'
+          import sys,zipfile
+          with zipfile.ZipFile(sys.argv[1]) as z:
+              assert z.testzip() is None, 'Corrupt APK ZIP entry'
+              assert {'AndroidManifest.xml','classes.dex','assets/index.html'}.issubset(set(z.namelist())), 'Compiled Android APK is missing required files'
+          print('APK archive and DEX passed.')
+          PY
+
+      - name: Give Android emulator hardware acceleration access
+        run: |
+          test -e /dev/kvm || { echo 'No /dev/kvm available on runner'; exit 1; }
+          sudo chmod 666 /dev/kvm
+
+      - name: Install, launch, and check actual packaged website in Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        env:
+          TEST_APK: dist/app-${{ inputs.job_id }}.apk
+          TEST_PACKAGE: ${{ inputs.package_name }}
+        with:
+          api-level: 35
+          arch: x86_64
+          target: google_apis
+          profile: pixel_2
+          disable-animations: true
+          emulator-boot-timeout: 900
+          script: bash tools/emulator_smoke.sh
+
+      - name: Upload APK and emulator evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: "verification-${{ inputs.job_id }}"
+          path: |
+            dist/*.apk
+            dist/apk-badging.txt
+            dist/emulator-*.txt
+            dist/emulator-screenshot.png
+          if-no-files-found: warn
+          retention-days: 7
+
+      # Publish only after compile, signing, installation, launch and local HTML probe succeed.
+      - name: Publish verified APK to Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BUILD_JOB: ${{ inputs.job_id }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh release create "apk-$BUILD_JOB" "dist/app-$BUILD_JOB.apk" \
+            --repo "$GH_REPO" \
+            --title "Verified ZIP2APK build $BUILD_JOB" \
+            --notes 'APK passed Gradle compilation, apksigner, aapt, Android emulator install, launch, and HTML DOM rendering. This is emulator validation, not physical-phone testing.'
