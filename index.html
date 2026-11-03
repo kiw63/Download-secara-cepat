@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0e1219">
+<meta name="description" content="ZIP2APK Studio — kompiler website ZIP menjadi APK Android dengan GitHub Actions.">
+<title>ZIP2APK — Private Build Studio</title>
+<style>
+:root{color-scheme:dark;--bg:#0e1219;--surface:#161c25;--second:#1b222c;--edge:#303948;--text:#eff3f6;--dim:#94a1b1;--accent:#9ab6a8;--error:#e6a6a6;--good:#9dd9b7;--radius:18px}*{box-sizing:border-box}html{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}body{margin:0;min-height:100vh;background:radial-gradient(ellipse 85% 400px at 65% -50px,#24303b 0,transparent 88%),var(--bg);color:var(--text);line-height:1.55}button,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.5}a{color:#c1dfd0}main{max-width:1050px;margin:auto;padding:28px 24px 60px}header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0 34px;border-bottom:1px solid #27303c}.identity{display:flex;align-items:center;gap:12px;font-size:14px;letter-spacing:.1em;font-weight:800}.mark{height:33px;width:33px;display:grid;place-items:center;border:1px solid #4b665d;border-radius:9px;color:#cbe5d3;font-weight:900;font-size:18px}.header-tag{font-size:11px;letter-spacing:.14em;color:var(--dim)}.hero{padding:64px 0 36px;max-width:740px}.eyebrow{color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}h1{font-size:clamp(35px,5.2vw,61px);line-height:1.1;letter-spacing:-.05em;margin:15px 0 18px;font-weight:660}h1 span{color:#a2c4b5}.hero p{max-width:620px;color:var(--dim);margin:0;font-size:15px}section.layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(260px,.8fr);gap:20px;align-items:start}.panel{background:linear-gradient(150deg,#19212b,#141a22);border:1px solid var(--edge);border-radius:var(--radius);box-shadow:0 16px 65px #00000023;overflow:hidden}.panel-body{padding:30px}.top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:24px}.top h2{font-size:21px;letter-spacing:-.025em;margin:0}.count{font-size:11px;color:var(--accent);border:1px solid #43574f;border-radius:50px;padding:5px 10px;white-space:nowrap}.muted{color:var(--dim);font-size:13px}.stack{display:grid;gap:15px}.field{display:grid;gap:7px}.field label{font-size:12px;font-weight:650;color:#cad3da}.field input{width:100%;outline:none;padding:12px 13px;border:1px solid #3d4753;border-radius:11px;background:#10151c;color:var(--text);font-size:14px;transition:border-color .2s}.field input:focus{border-color:var(--accent)}.field input::placeholder{color:#71808e}.action{width:100%;display:flex;gap:9px;align-items:center;justify-content:center;margin-top:8px;border:1px solid #a2c3b3;border-radius:11px;background:#a7c7b8;color:#0c1514;min-height:47px;padding:10px 15px;font-size:14px;font-weight:780;transition:background .2s}.action:hover:not(:disabled){background:#cae7d7}.ghost{background:transparent;color:#c5dfd0;border-color:#53685f}.ghost:hover:not(:disabled){background:#26382f}.tabs{display:grid;grid-template-columns:1fr 1fr;padding:4px;border:1px solid #35404a;background:#10161d;border-radius:11px;margin-bottom:22px}.tab{background:transparent;border:0;color:var(--dim);border-radius:8px;padding:9px;font-size:13px}.tab.active{background:#293731;color:#e2f2e7}.status{padding:12px 13px;background:#111922;border:1px solid #364451;border-radius:10px;font-size:12px;color:#b4c3ce;overflow-wrap:anywhere}.status.ok{color:var(--good);border-color:#385e4b}.status.err{color:var(--error);border-color:#694444}.cameraBox{margin-top:18px;overflow:hidden;border-radius:13px;border:1px solid #354451;position:relative;background:#05090d;min-height:230px}.cameraBox video{display:block;width:100%;max-height:370px;object-fit:cover;transform:scaleX(-1)}.cameraBox .overlay{position:absolute;left:12px;right:12px;bottom:12px;background:#10161fda;backdrop-filter:blur(6px);padding:9px 12px;border-radius:9px;font-size:12px;color:#e0eee8}.hidden{display:none!important}.aside .panel-body{padding:26px}.aside h3{font-size:15px;margin:0 0 12px}.aside p{font-size:12.5px;color:var(--dim);margin:0 0 20px}.divider{border-top:1px solid var(--edge);margin:19px 0}.miniTitle{color:#c2d8ce;font-size:12px;font-weight:700;margin-bottom:8px}.checkpoint{display:flex;gap:11px;margin:13px 0;align-items:flex-start;font-size:12px;color:#b8c5d1}.checkpoint b{background:#27352f;border:1px solid #485f53;border-radius:7px;width:25px;height:25px;flex:none;text-align:center;line-height:23px;color:#bed8c6;font-size:11px}.note{font-size:12px;line-height:1.6;color:#9aabb9}.filepick{padding:23px 15px;border:1px dashed #719283;border-radius:13px;background:#101920;position:relative;text-align:center;min-height:126px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;touch-action:manipulation}.filepick:focus-within{outline:2px solid #a7c7b8;outline-offset:2px}.filepick input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px;z-index:2}.filepick strong{display:block;color:#d7efe2;font-size:15px;margin-bottom:3px}.filepick small,.filepick .file-name{pointer-events:none}.filepick small{display:block;color:var(--dim);font-size:11px;margin-top:10px}.file-name{margin-top:9px;color:var(--accent);font-size:12px;overflow-wrap:anywhere}.tick{display:flex;align-items:flex-start;gap:10px;font-size:12px;color:#b6c3cd}.tick input{accent-color:#a7c7b8;width:17px;height:17px;margin-top:2px}.build-steps{margin:14px 0 0;padding:15px;background:#10161e;border:1px solid var(--edge);border-radius:11px;display:grid;gap:9px}.stepLine{display:flex;justify-content:space-between;gap:10px;color:#bcc7d3;font-size:12px}.dot{height:8px;width:8px;border-radius:50%;background:#667584;display:inline-block;margin-right:8px}.dot.live{background:#d4dba1;box-shadow:0 0 12px #d4dba156}.dot.ok{background:#94d9b0}.dot.fail{background:#e39898}#log{margin-top:14px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:200px;overflow:auto;font-size:11px;font-family:ui-monospace,monospace;color:#9db0be;background:#0d1218;padding:13px;border-radius:9px;border:1px solid #2c3541}.links{display:flex;gap:13px;flex-wrap:wrap;margin-top:13px}.links a{font-size:12px}.successPanel{padding:18px;border:1px solid #47725d;background:#15271e;border-radius:12px}.successPanel h3{margin:0 0 7px;font-size:17px}.foot{border-top:1px solid #29333d;margin-top:44px;padding-top:20px;font-size:11px;color:#81909e;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px}@media(max-width:790px){section.layout{grid-template-columns:1fr}.hero{padding:40px 0 30px}.aside{order:2}}@media(max-width:480px){main{padding:15px 15px 45px}.panel-body{padding:21px}.hero{padding:36px 3px 26px}h1{font-size:37px}header{padding-bottom:23px}.header-tag{font-size:9px}}
+</style>
+</head>
+<body>
+<main>
+<header><div class="identity"><span class="mark">Z</span> ZIP2APK <span style="font-weight:450;color:#91a399">/ STUDIO</span></div><span class="header-tag">PRIVATE BUILD WORKSPACE · v5.0</span></header>
+<div class="hero"><div class="eyebrow">Minimal interface · Real Android build</div><h1>Dari ZIP menjadi <span>APK.</span></h1><p>Unggah website statis, kompilasi di GitHub Actions, verifikasi tanda tangan APK, uji instalasi dan buka aplikasi di emulator Android, lalu unduh APK. Tidak ada progress palsu.</p></div>
+<section class="layout">
+<div>
+  <article class="panel" id="authPanel"><div class="panel-body">
+    <div class="top"><h2>Verifikasi akses</h2><span class="count">01 / IDENTITAS LOKAL</span></div>
+    <div class="tabs"><button class="tab" id="tabRegister">Daftar wajah</button><button class="tab active" id="tabLogin">Masuk kembali</button></div>
+    <div class="stack"><div class="field"><label for="username">Nama pemilik</label><input id="username" autocomplete="off" spellcheck="false" placeholder="contoh: pemilik_utama" maxlength="24"></div>
+    <p class="muted" id="authText" style="margin:0">Gunakan perangkat/browser tempat wajah pertama kali didaftarkan. Verifikasi wajah baru diminta pada setiap pemuatan halaman.</p>
+    <button id="startFace" class="action" type="button">Buka kamera & kenali wajah otomatis</button></div>
+    <div class="cameraBox hidden" id="cameraBox"><video id="video" autoplay muted playsinline></video><div class="overlay" id="faceStep">Mengaktifkan kamera...</div></div>
+    <div class="status" id="authStatus" role="status" aria-live="polite" style="margin-top:16px">Belum terverifikasi. Kamera tidak aktif.</div>
+    <button id="enter" class="action hidden" type="button">Masuk ruang kompilasi</button>
+  </div></article>
+
+  <article class="panel hidden" id="buildPanel"><div class="panel-body">
+    <div class="top"><h2>Bangun aplikasi</h2><span class="count">02 / ANDROID TOOLCHAIN</span></div>
+    <div class="stack">
+      <div class="field"><label for="repository">Repositori GitHub yang berisi workflow builder</label><input id="repository" placeholder="username/repository" autocomplete="off" spellcheck="false"></div>
+      <div class="field"><label for="token">Fine-grained GitHub token</label><input id="token" type="password" autocomplete="off" spellcheck="false" placeholder="github_pat_..."></div>
+      <p class="note" style="margin:-6px 0 0">Token hanya ada di memori tab selama build. Gunakan izin <b>Contents: Read/Write</b> dan <b>Actions: Read/Write</b> pada repository builder. Jangan pernah masukkan token ke file atau repository publik.</p>
+      <div class="divider" style="margin:3px 0"></div>
+      <div class="field"><label for="appname">Nama aplikasi Android</label><input id="appname" placeholder="Aplikasi Saya" maxlength="42"></div>
+      <div class="field"><label for="packageid">Package ID Android (harus unik)</label><input id="packageid" placeholder="com.contoh.aplikasi" autocapitalize="none" spellcheck="false"></div>
+      <div class="filepick" id="pickArea"><strong>Ketuk di sini untuk memilih ZIP</strong><small>Seluruh kotak bisa diketuk · ZIP dengan index.html · maksimum 18 MB</small><div class="file-name" id="fileName">Belum ada file dipilih</div><input type="file" id="zip" accept=".zip,application/zip,application/x-zip-compressed" aria-label="Pilih file ZIP dari HP"></div>
+      <div id="zipStatus" class="status" role="status" aria-live="polite">Pilih ZIP dari penyimpanan HP terlebih dahulu.</div>
+      <label class="tick"><input id="publicAck" type="checkbox"><span>Saya memahami bahwa <b>ZIP yang dikirim ke repository publik akan dapat dibaca orang lain, termasuk melalui riwayat commit</b>. Gunakan repository builder privat untuk kode rahasia.</span></label>
+      <button id="build" class="action" type="button">Unggah ZIP & buat APK asli</button>
+      <button id="logout" class="action ghost" type="button">Kunci ruang kompilasi</button>
+      <div class="status" id="buildStatus" role="status" aria-live="polite">Menunggu file dan kredensial GitHub.</div>
+    </div>
+    <div id="progressPanel" class="hidden"><div class="build-steps" id="steps"></div><pre id="log" aria-live="polite"></pre><div class="links"><a id="runLink" target="_blank" rel="noopener" class="hidden">Buka log GitHub Actions</a></div></div>
+    <div id="success" class="successPanel hidden" style="margin-top:18px"><h3>APK selesai dibangun</h3><p class="muted">GitHub Actions telah memverifikasi tanda tangan APK. Android tetap akan meminta persetujuan instalasi dan mungkin izin sumber tidak dikenal.</p><a id="apkLink" class="action" target="_blank" rel="noopener">Unduh file APK untuk instalasi</a></div>
+  </div></article>
+</div>
+<aside class="aside panel"><div class="panel-body">
+  <h3>Alur kompilasi</h3>
+  <div class="checkpoint"><b>01</b><span>Kamera depan mengenali dan membandingkan wajah secara otomatis dengan profil di IndexedDB browser ini.</span></div>
+  <div class="checkpoint"><b>02</b><span>GitHub token memberi otorisasi sebenarnya ke repository dan workflow.</span></div>
+  <div class="checkpoint"><b>03</b><span>GitHub Actions memakai Java 17, Android SDK 35 dan Gradle untuk membangun APK.</span></div>
+  <div class="checkpoint"><b>04</b><span>APK signed diperiksa oleh <code>apksigner</code>, tersedia sebagai Release dan Artifact.</span></div>
+  <div class="divider"></div>
+  <div class="miniTitle">Batas keamanan</div>
+  <p>Pencocokan wajah otomatis tanpa tantangan gerakan <b>bukan deteksi keaslian wajah atau sistem anti-deepfake</b>. Profil IndexedDB dapat dimodifikasi pada perangkat, sehingga perlindungan build sebenarnya tetap pada izin token GitHub. Izin GitHub pada token adalah pengaman build yang sebenarnya.</p>
+  <div class="miniTitle">Batas input</div><p>ZIP wajib berisi website statis; kode PHP, backend Node, atau source Android mentah tidak otomatis berubah menjadi APK. Jika source memakai Vite/React, unggah ZIP dari folder <code>dist</code> setelah build.</p>
+  <div class="miniTitle">Persyaratan layanan</div><p>Website: GitHub Pages HTTPS. Kompilasi: GitHub Actions aktif di repository target. Untuk repositori privat, pengguna harus punya izin yang sesuai. Model AI wajah memerlukan unduhan internet saat verifikasi.</p>
+</div></aside>
+</section>
+<div class="foot"><span>ZIP2APK STUDIO v5 · GitHub Pages + Actions</span><span>APK ditandatangani secara digital · bukan distribusi Google Play</span></div>
+</main>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const status=(id,message,kind='')=>{const el=$(id);el.textContent=message;el.className='status'+(kind?' '+kind:'');if(kind==='err')el.scrollIntoView({block:'center',behavior:'smooth'});};
+const hidden=(id,isHidden)=>$(id).classList.toggle('hidden',isHidden);
+const uuid=()=>Array.from(crypto.getRandomValues(new Uint8Array(16))).map(x=>x.toString(16).padStart(2,'0')).join('');
+const DB='zip2apk-face-local-v2';
+let mode='login',dbPromise,session=null,stream=null,runId=null,stopped=false,modelTask=null,faceValid=false,authLoop=0,uploadXhr=null;
+const MODEL_URLS=['https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights','https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights'];
+const FACE_SCRIPTS=['https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js','https://unpkg.com/face-api.js@0.22.2/dist/face-api.min.js'];
+function db(){
+ if(!dbPromise)dbPromise=new Promise((resolve,reject)=>{
+   const req=indexedDB.open(DB,1);
+   req.onupgradeneeded=()=>req.result.createObjectStore('profiles',{keyPath:'name'});
+   req.onsuccess=()=>resolve(req.result);
+   req.onerror=()=>reject(req.error);
+ });return dbPromise;
+}
+async function profile(name){const d=await db();return new Promise((res,rej)=>{const r=d.transaction('profiles').objectStore('profiles').get(name);r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function allProfiles(){const d=await db();return new Promise((res,rej)=>{const r=d.transaction('profiles').objectStore('profiles').getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}
+async function saveProfile(rec){const d=await db();return new Promise((res,rej)=>{const tx=d.transaction('profiles','readwrite');tx.objectStore('profiles').put(rec);tx.oncomplete=()=>res();tx.onerror=()=>rej(tx.error)})}
+function stopCamera(){authLoop++;if(stream){stream.getTracks().forEach(t=>t.stop());stream=null} $('video').srcObject=null;hidden('cameraBox',true);$('startFace').disabled=false;}
+function toggleMode(value){stopCamera();mode=value;faceValid=false;hidden('enter',true);$('tabLogin').classList.toggle('active',mode==='login');$('tabRegister').classList.toggle('active',mode==='register');$('authText').textContent=mode==='register'?'Daftarkan satu wajah pemilik di browser ini. Jika sudah ada profil, pendaftaran berbeda akan ditolak.':'Verifikasi wajah pemilik yang sudah tersimpan di IndexedDB browser ini.';status('authStatus',mode==='login'?'Siap melakukan verifikasi ulang.':'Pendaftaran memerlukan kamera dan pengenalan wajah lokal.');}
+$('tabLogin').addEventListener('click',()=>toggleMode('login'));
+$('tabRegister').addEventListener('click',()=>toggleMode('register'));
+async function loadScript(url){return new Promise((res,rej)=>{
+ const tag=document.createElement('script');let done=false;
+ const finish=(error)=>{if(done)return;done=true;clearTimeout(timeout);if(error){tag.remove();rej(error)}else res()};
+ const timeout=setTimeout(()=>finish(Error('Koneksi CDN pengenal wajah terlalu lama. Mencoba sumber cadangan…')),25000);
+ tag.src=url;tag.async=true;
+ tag.onload=()=>finish();tag.onerror=()=>finish(Error('Gagal mengunduh model wajah. Mencoba sumber cadangan…'));
+ document.head.appendChild(tag);
+})}
+async function ensureFaceModels(){
+ if(!modelTask)modelTask=(async()=>{
+   if(!window.faceapi){let last;for(const url of FACE_SCRIPTS){try{await loadScript(url);if(window.faceapi)break}catch(e){last=e}}if(!window.faceapi)throw last||Error('Pengenal wajah tidak dapat dimuat.')}
+   if(!window.faceapi)throw Error('Library AI wajah tidak tersedia.');
+   let last;
+   for(const url of MODEL_URLS){
+     try{
+       await Promise.race([
+         Promise.all([
+           faceapi.nets.tinyFaceDetector.loadFromUri(url),
+           faceapi.nets.faceLandmark68Net.loadFromUri(url),
+           faceapi.nets.faceRecognitionNet.loadFromUri(url)
+         ]),
+         new Promise((_,reject)=>setTimeout(()=>reject(Error('Unduhan model wajah terlalu lama.')),65000))
+       ]);
+       return;
+     }catch(error){last=error}
+   }
+   throw Error('Model wajah gagal diunduh dari CDN. Periksa internet lalu coba kembali. '+(last?.message||''));
+ })().catch(e=>{modelTask=null;throw e});
+ return modelTask;
+}
+function dist(a,b){return Math.sqrt(a.reduce((sum,n,i)=>sum+(n-b[i])**2,0))}
+function mean(v){return v[0].map((_,i)=>v.reduce((sum,arr)=>sum+arr[i],0)/v.length)}
+async function descriptor(){
+ const r=await faceapi.detectAllFaces($('video'),new faceapi.TinyFaceDetectorOptions({inputSize:320,scoreThreshold:.52})).withFaceLandmarks().withFaceDescriptors();
+ return r.length===1?Array.from(r[0].descriptor):null;
+}
+async function verifyFace(id,user){
+ const samples=[];
+ const start=Date.now();
+ while(stream && id===authLoop){
+   if(Date.now()-start>42000)throw Error('Wajah belum terdeteksi. Pastikan kamera depan terang dan hanya satu wajah terlihat, lalu coba lagi.');
+   $('faceStep').textContent='Mengenali wajah secara otomatis · '+samples.length+'/2';
+   const data=await descriptor();
+   if(!stream||id!==authLoop)return;
+   if(data){
+     if(samples.length&&dist(data,samples[0])>.46){samples.length=0;$('faceStep').textContent='Wajah bergerak terlalu cepat. Hadap kamera sebentar.'}
+     else samples.push(data);
+   }else $('faceStep').textContent='Arahkan satu wajah ke kamera depan, pastikan cukup cahaya.';
+   if(samples.length===2){
+     const result=mean(samples);
+     if(mode==='login'){
+       const rec=await profile(user);
+       if(!rec || !Array.isArray(rec.descriptor) || rec.descriptor.length!==result.length)throw Error('Profil wajah tidak cocok / tidak tersedia. Akses ditolak.');
+       if(dist(result,rec.descriptor)>.52)throw Error('Wajah bukan pemilik terdaftar. Akses ditolak.');
+     }else{
+       await saveProfile({name:user,descriptor:result,created:Date.now()});
+     }
+     stopCamera();faceValid=true;
+     status('authStatus','Wajah cocok. Ruang kompilasi terbuka otomatis.','ok');
+     hidden('authPanel',true);hidden('buildPanel',false);$('repository').focus();
+     return;
+   }
+   await sleep(300);
+ }
+}
+$('startFace').addEventListener('click',async()=>{
+ let user=$('username').value.trim();
+ try{
+   if(!/^[a-z][a-z0-9_-]{2,23}$/.test(user))throw Error('Nama akun: 3–24 karakter huruf kecil, angka, _ atau -.');
+   const profiles=await allProfiles();
+   if(mode==='register'&&profiles.length)throw Error('Browser ini sudah memiliki pemilik yang terdaftar. Registrasi baru ditolak.');
+   if(mode==='login'&&!profiles.some(p=>p.name===user))throw Error('Profil wajah tidak ditemukan. Gunakan mode daftar pada browser baru.');
+   if(!isSecureContext||!navigator.mediaDevices?.getUserMedia)throw Error('Chrome HTTPS dan izin kamera dibutuhkan.');
+   $('startFace').disabled=true;
+   status('authStatus','Membuka kamera depan...');
+   stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:640},height:{ideal:480}},audio:false});
+   $('video').srcObject=stream;hidden('cameraBox',false);await $('video').play();
+   $('faceStep').textContent='Kamera aktif. Menyiapkan pengenal wajah…';
+   status('authStatus','Memuat model pengenal wajah. Kamera sudah aktif…');
+   await ensureFaceModels();
+   status('authStatus','Hadap kamera. Pencocokan berlangsung otomatis tanpa gerakan khusus.');
+   const id=++authLoop;
+   await verifyFace(id,user);
+ }catch(e){stopCamera();status('authStatus',e.message||String(e),'err')}
+});
+$('enter').addEventListener('click',()=>{
+ if(!faceValid)return;
+ hidden('authPanel',true);hidden('buildPanel',false);
+ $('repository').focus();
+});
+$('logout').addEventListener('click',()=>{
+ stopped=true;try{uploadXhr?.abort()}catch(_){};session=null;runId=null;faceValid=false;hidden('buildPanel',true);hidden('authPanel',false);hidden('progressPanel',true);hidden('success',true);$('token').value='';toggleMode('login');
+});
+function cleanRepo(s){let m=/^([A-Za-z0-9][A-Za-z0-9-]{0,38})\/([A-Za-z0-9_.-]{1,100})$/.exec(s.trim());if(!m||m[2]==='.'||m[2]==='..')throw Error('Format repo harus owner/repository.');return m[1]+'/'+m[2];}
+async function github(url,{method='GET',body,token}={}){
+ const controller=new AbortController();
+ const timeout=setTimeout(()=>controller.abort(),45000);
+ try{
+   const res=await fetch('https://api.github.com'+url,{
+     method,
+     signal:controller.signal,
+     headers:{'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','Authorization':'Bearer '+(token||session?.token||''),...(body?{'Content-Type':'application/json'}:{})},
+     ...(body?{body:JSON.stringify(body)}:{})
+   });
+   if(res.status===204)return {};
+   const data=await res.json().catch(()=>({}));
+   if(!res.ok){
+     const detail=data.message||('HTTP '+res.status);
+     const hint=res.status===401?'Token GitHub tidak sah.':res.status===403?'Token kurang izin, Actions dibatasi, atau rate limit.':res.status===404?'Repository/workflow tidak ditemukan atau token tidak punya akses.':'';
+     throw Error('GitHub API HTTP '+res.status+': '+detail+' '+hint)
+   }
+   return data;
+ }catch(e){
+   if(e.name==='AbortError')throw Error('GitHub API tidak merespons selama 45 detik. Periksa koneksi, lalu ulangi.');
+   if(e instanceof TypeError)throw Error('Tidak bisa tersambung ke GitHub API. Periksa internet dan pemblokir jaringan.');
+   throw e;
+ }finally{clearTimeout(timeout)}
+}
+function updateStep(message){const line=document.createElement('div');line.className='stepLine';const name=document.createElement('span');const ico=document.createElement('i');ico.className='dot live';name.appendChild(ico);name.appendChild(document.createTextNode(message));line.appendChild(name);$('steps').replaceChildren(line)}
+function log(msg){const el=$('log');el.textContent+='\n'+new Date().toLocaleTimeString('id-ID')+'  '+msg;el.scrollTop=el.scrollHeight}
+async function b64FromFile(file){const bytes=new Uint8Array(await file.arrayBuffer());const parts=[];for(let offset=0;offset<bytes.length;offset+=0x8000){parts.push(String.fromCharCode(...bytes.subarray(offset,offset+0x8000)))}return btoa(parts.join(''))}
+function uploadZip(repo,branch,job,file,token){
+ return new Promise(async(resolve,reject)=>{
+   let content;
+   try{updateStep('Menyiapkan ZIP untuk dikirim · '+(file.size/1024/1024).toFixed(2)+' MB');content=await b64FromFile(file)}catch(e){reject(e);return;}
+   const xhr=new XMLHttpRequest();uploadXhr=xhr;
+   xhr.open('PUT','https://api.github.com/repos/'+repo+'/contents/uploads/'+job+'.zip',true);
+   xhr.timeout=10*60*1000;
+   xhr.setRequestHeader('Accept','application/vnd.github+json');
+   xhr.setRequestHeader('X-GitHub-Api-Version','2022-11-28');
+   xhr.setRequestHeader('Authorization','Bearer '+token);
+   xhr.setRequestHeader('Content-Type','application/json');
+   xhr.upload.onprogress=e=>{
+     if(e.lengthComputable){const pc=Math.min(99,Math.floor(100*e.loaded/e.total));updateStep('Mengunggah ZIP ke GitHub: '+pc+'%');status('buildStatus','Upload jaringan sedang berjalan: '+pc+'%. Jangan tutup tab.');}
+     else{updateStep('Mengirim ZIP ke GitHub · '+(e.loaded/1024/1024).toFixed(1)+' MB terkirim')}
+   };
+   xhr.onerror=()=>reject(Error('Jaringan ke GitHub terputus. Cek koneksi data, lalu ulangi.'));
+   xhr.ontimeout=()=>reject(Error('Upload melewati 10 menit. Cek internet dan ukuran ZIP, lalu ulangi.'));
+   xhr.onabort=()=>reject(Error('Upload dibatalkan.'));
+   xhr.onload=()=>{
+     let body={};try{body=JSON.parse(xhr.responseText)}catch(_){}
+     if(xhr.status>=200&&xhr.status<300){if(body.content?.sha){resolve(body);return;}reject(Error('GitHub menerima request tetapi tidak mengembalikan SHA commit ZIP. Cek tab Contents repository.'));return;}
+     const msg=body.message||('HTTP '+xhr.status);
+     reject(Error('Upload GitHub gagal (HTTP '+xhr.status+'): '+msg+'. Pastikan token punya Contents Read/Write dan repository benar.'));
+   };
+   xhr.send(JSON.stringify({message:'ZIP2APK input '+job,content,branch}));
+ });
+}
+function validateInput(file,name,pkg){
+ if(!file||!file.name.toLowerCase().endsWith('.zip'))throw Error('Pilih file .zip terlebih dahulu.');
+ if(file.size<20||file.size>18*1024*1024)throw Error('Ukuran ZIP harus lebih kecil dari 18 MB.');
+ if(name.trim().length<2||name.trim().length>42||/[\r\n\x00-\x1f]/.test(name))throw Error('Nama aplikasi harus 2–42 karakter.');
+ if(!/^(?:[a-z][a-z0-9_]*\.){2,}[a-z][a-z0-9_]*$/.test(pkg)||pkg.length>110)throw Error('Package ID tidak valid. Contoh: com.nama.aplikasi');
+}
+// Validate the ZIP central directory in-browser before any private repository write.
+// This catches broken ZIPs, symlinks, traversal, and missing index.html early.
+async function inspectZip(file){
+  if(!file)throw Error('File ZIP belum dipilih.');
+  const tailLength=Math.min(file.size,65557);
+  const tail=new DataView(await file.slice(file.size-tailLength).arrayBuffer());
+  let eocd=-1;
+  for(let i=tail.byteLength-22;i>=0;i--){
+    if(tail.getUint32(i,true)===0x06054b50 && i+22+tail.getUint16(i+20,true)===tail.byteLength){eocd=i;break;}
+  }
+  if(eocd<0)throw Error('ZIP rusak: bagian akhir arsip tidak ditemukan.');
+  const count=tail.getUint16(eocd+10,true);
+  const disk=tail.getUint16(eocd+4,true);
+  const disk2=tail.getUint16(eocd+6,true);
+  const cdSize=tail.getUint32(eocd+12,true),cdOffset=tail.getUint32(eocd+16,true);
+  if(disk||disk2||count===65535||cdOffset===0xffffffff||cdSize===0xffffffff)throw Error('ZIP multi-disk dan ZIP64 belum didukung.');
+  if(count>1500||cdSize>file.size||cdOffset+cdSize>file.size)throw Error('ZIP terlalu banyak entri atau direktori ZIP rusak.');
+  const cd=new DataView(await file.slice(cdOffset,cdOffset+cdSize).arrayBuffer());
+  let offset=0,totalSize=0,root=false,nested=[],seen=new Set();
+  const decoder=new TextDecoder('utf-8',{fatal:false});
+  for(let i=0;i<count;i++){
+    if(offset+46>cd.byteLength || cd.getUint32(offset,true)!==0x02014b50)throw Error('ZIP rusak: entri direktori tidak valid.');
+    const flag=cd.getUint16(offset+8,true);
+    const method=cd.getUint16(offset+10,true);
+    const expanded=cd.getUint32(offset+24,true);
+    const nameLength=cd.getUint16(offset+28,true);
+    const extraLength=cd.getUint16(offset+30,true);
+    const commentLength=cd.getUint16(offset+32,true);
+    const mode=cd.getUint32(offset+38,true)>>>16;
+    const end=offset+46+nameLength+extraLength+commentLength;
+    if(end>cd.byteLength)throw Error('ZIP rusak: panjang nama entri tidak sesuai.');
+    const name=decoder.decode(new Uint8Array(cd.buffer,offset+46,nameLength));
+    if(flag&1)throw Error('ZIP berpassword tidak didukung.');
+    if(method!==0 && method!==8)throw Error('Metode kompresi ZIP tidak didukung.');
+    if((mode&0xf000)===0xa000)throw Error('ZIP mengandung symlink yang tidak aman.');
+    if(name.startsWith('/')||name.includes('\\')||name.includes('\0')||/^[a-zA-Z]:/.test(name)||name.split('/').includes('..'))throw Error('ZIP mengandung path berbahaya.');
+    if(expanded>35*1024*1024)throw Error('Ada satu berkas ZIP yang terlalu besar.');
+    totalSize+=expanded;
+    if(totalSize>110*1024*1024)throw Error('Isi ZIP melebihi 110 MB.');
+    if(!name.endsWith('/')){
+      if(seen.has(name))throw Error('ZIP berisi nama berkas duplikat.');
+      seen.add(name);
+      if(name==='index.html')root=true;
+      else if(name.endsWith('/index.html'))nested.push(name);
+    }
+    offset=end;
+  }
+  if(offset!==cd.byteLength)throw Error('ZIP rusak: ukuran direktori tidak sesuai.');
+  if(!root&&nested.length!==1)throw Error('ZIP harus punya index.html di root atau tepat satu folder website.');
+  return {count,location:root?'root':nested[0]};
+}
+$('zip').addEventListener('change',async()=>{
+ const file=$('zip').files?.[0];
+ $('fileName').textContent=file?file.name+' · '+(file.size/1024/1024).toFixed(2)+' MB':'Belum ada ZIP dipilih';
+ if(!file){status('zipStatus','Pilih ZIP dari penyimpanan HP.');return;}
+ status('zipStatus','Membaca isi ZIP secara lokal…');
+ try{validateInput(file,'Aplikasi Contoh','com.zip2apk.valid');const check=await inspectZip(file);status('zipStatus','ZIP valid · '+check.count+' berkas · index.html ditemukan.','ok');}
+ catch(e){status('zipStatus',e.message||String(e),'err')}
+});
+$('packageid').value='com.zip2apk.app'+uuid().slice(0,8);
+async function preflight(repo,token){
+ const meta=await github('/repos/'+repo,{token});
+ if(meta.private===false&&!$('publicAck').checked)throw Error('Repository ini publik. Centang persetujuan risiko kode ZIP menjadi publik, atau gunakan repository builder privat.');
+ const wf=await github('/repos/'+repo+'/actions/workflows/build-apk.yml',{token});
+ if(wf.state!=='active')throw Error('Workflow build-apk.yml belum aktif pada repository tersebut.');
+ if(meta.permissions && meta.permissions.push===false)throw Error('Token tidak diizinkan menulis ke repository. Berikan Contents Read/Write.');
+ return {branch:meta.default_branch,private:meta.private};
+}
+async function findRun(repo,job,start){
+ for(let tries=0;tries<100&&!stopped;tries++){
+   const data=await github('/repos/'+repo+'/actions/workflows/build-apk.yml/runs?event=workflow_dispatch&per_page=60');
+   const found=(data.workflow_runs||[]).find(run=>run.display_title?.includes(job));
+   if(found)return found;
+   updateStep('Workflow dikirim. Menunggu GitHub Actions membuat runner…');
+   await sleep(5000);
+ }
+ throw Error('GitHub Actions tidak menemukan run untuk build ini. Periksa workflow dan Actions repository.');
+}
+async function monitor(repo,run,job){
+ let last='';
+ for(let tries=0;tries<820&&!stopped;tries++){
+   const info=await github('/repos/'+repo+'/actions/runs/'+run.id);
+   runId=run.id;
+   const jobs=await github('/repos/'+repo+'/actions/runs/'+run.id+'/jobs?per_page=30');
+   const steps=(jobs.jobs||[]).flatMap(j=>j.steps||[]);
+   let current=steps.find(x=>x.status==='in_progress')||steps.find(x=>x.status==='queued');
+   let failed=steps.find(x=>x.conclusion==='failure');
+   const line=(failed?'GAGAL: '+failed.name:current?.name||info.status||'Menunggu runner');
+   if(last!==line){last=line;updateStep(line);log(line)}
+   if(info.status==='completed'){
+     if(info.conclusion!=='success')throw Error('GitHub Actions gagal pada tahap: '+(failed?.name||'tidak diketahui')+'. Status: '+info.conclusion+'. Ketuk Buka log GitHub Actions untuk detail error.');
+     status('buildStatus','Build selesai. Memeriksa GitHub Release APK...','ok');
+     let apk=null;
+     for(let attempt=0;attempt<8;attempt++){
+       try{const release=await github('/repos/'+repo+'/releases/tags/apk-'+job);apk=(release.assets||[]).find(a=>a.name==='app-'+job+'.apk');if(apk)break;}catch(err){if(attempt===7)throw err;}
+       await sleep(1500);
+     }
+     if(!apk)throw Error('Build berhasil, tetapi release tidak memiliki APK. Periksa langkah Publish APK.');
+     $('apkLink').href=apk.browser_download_url;
+     hidden('success',false);status('buildStatus','APK sukses dikompilasi, diverifikasi, dipasang dan dibuka di emulator Android. Siap diunduh untuk HP.','ok');
+     updateStep('Selesai. APK teruji di emulator dan lolos apksigner.');
+     log('APK ditemukan: '+apk.name+' ('+Math.round(apk.size/1024)+' KB)');
+     return;
+   }
+   await sleep(6000);
+ }
+ if(stopped)return;
+ throw Error('Batas monitor tercapai. Build bisa tetap berjalan di GitHub Actions.');
+}
+$('build').addEventListener('click',async()=>{
+ if(!faceValid){status('buildStatus','Wajib verifikasi wajah lagi sebelum build.','err');return}
+ const file=$('zip').files[0],name=$('appname').value.trim(),pkg=$('packageid').value.trim();
+ const token=$('token').value.trim();
+ let repo,job,meta;
+ try{
+   if(!token||token.length<20)throw Error('Masukkan fine-grained GitHub token yang benar.');
+   repo=cleanRepo($('repository').value);
+   validateInput(file,name,pkg);
+   $('build').disabled=true;hidden('progressPanel',false);hidden('success',true);$('steps').replaceChildren();$('log').textContent='';
+   status('buildStatus','Memeriksa ZIP asli sebelum pengiriman...');updateStep('Pemeriksaan arsip ZIP');
+   const zipInfo=await inspectZip(file);
+   log('ZIP sah: '+zipInfo.count+' entri, index.html ditemukan di '+zipInfo.location+'.');
+   status('buildStatus','Memeriksa repository dan izin akses...');updateStep('Validasi GitHub API');
+   meta=await preflight(repo,token);
+   session={repo,token};stopped=false;
+   job=uuid();const path='uploads/'+job+'.zip';
+   updateStep('Mengunggah ZIP ke GitHub...');log('Ukuran arsip '+(file.size/1024/1024).toFixed(2)+' MB; repo '+(meta.private?'privat':'PUBLIK'));
+   await uploadZip(repo,meta.branch,job,file,token);
+   updateStep('Menjalankan workflow GitHub Actions...');log('ZIP berhasil dikirim ke '+path);
+   const start=Date.now();
+   await github('/repos/'+repo+'/actions/workflows/build-apk.yml/dispatches',{method:'POST',body:{ref:meta.branch,inputs:{job_id:job,zip_path:path,app_name:name,package_name:pkg}}});
+   const run=await findRun(repo,job,start);
+   $('runLink').href=run.html_url;hidden('runLink',false);
+   log('GitHub Actions run #'+run.id+' ditemukan.');
+   status('buildStatus','GitHub Actions sedang mengompilasi APK. Lihat progres tahap di bawah.');
+   await monitor(repo,run,job);
+ }catch(e){status('buildStatus',e.message||String(e),'err');updateStep('Proses berhenti karena kesalahan.');log('ERROR: '+(e.message||String(e)))}
+ finally{$('build').disabled=false;session=null;uploadXhr=null;}
+});
+(async()=>{try{const profiles=await allProfiles();if(!profiles.length){toggleMode('register')}else{$('username').value=profiles[0].name;toggleMode('login')}}catch(e){status('authStatus','IndexedDB gagal dibuka: '+e.message,'err')}})();
+window.addEventListener('pagehide',stopCamera);
+</script>
+</body>
+</html>
